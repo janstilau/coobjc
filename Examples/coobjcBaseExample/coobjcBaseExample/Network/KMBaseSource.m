@@ -74,6 +74,14 @@
             dictionary = nil;
         }
     }
+    if (dictionary == nil) {
+        NSString *jsonPath = [[NSBundle mainBundle] pathForResource:jsonFile ofType:nil];
+        NSData *jsonData = [NSData dataWithContentsOfFile:jsonPath];
+        NSDictionary *jsonDict =  [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:nil];
+        if (jsonDict) {
+            dictionary = jsonDict;
+        }
+    }
     return dictionary;
 }
 

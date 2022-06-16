@@ -1,28 +1,9 @@
-//
-//  Promise.swift
-//  coswift
-//
-//  Copyright © 2018 Alibaba Group Holding Limited All rights reserved.
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-
 import Foundation
 
 private enum PromiseState {
     case pending
     case fulfilled
     case rejected
-    
 }
 
 public enum Resolution<T> {
@@ -32,15 +13,12 @@ public enum Resolution<T> {
 
 public class Promise<T> {
     
-    
     public typealias PromiseOnCancelBlock = (Promise<T>) -> Void
     public typealias PromiseFulfill = (T) -> Void
     public typealias PromiseReject = (Error) -> Void
     public typealias PromiseConstructor = (@escaping PromiseFulfill, @escaping PromiseReject) -> Void
     
     private typealias PromiseObserver = (PromiseState, Resolution<T>) -> Void
-    
-    
     
     private var state: PromiseState = .pending
     private var _value: T?

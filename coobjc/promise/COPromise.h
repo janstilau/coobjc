@@ -1,26 +1,3 @@
-//
-//  COPromise.h
-//  coobjc
-//
-//  Copyright © 2018 Alibaba Group Holding Limited All rights reserved.
-//  Copyright 2018 Google Inc. All rights reserved.
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-//
-//
-//    Reference code from: [FBLPromise](https://github.com/google/promises)
-
-
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -88,7 +65,7 @@ typedef void (^COPromiseConstructor)(COPromiseFulfill fullfill, COPromiseReject 
 
 /**
  Create a promise without constructor. Which means, you should control when the job begins.
-
+ 
  @return The `COPromise` instance
  */
 + (instancetype)promise;
@@ -96,7 +73,7 @@ typedef void (^COPromiseConstructor)(COPromiseFulfill fullfill, COPromiseReject 
 
 /**
  Create a promise with constructor. the job begans when someone observing on it.
-
+ 
  @param constructor the constructor block.
  @return The `COPromise` instance
  */
@@ -114,14 +91,14 @@ typedef void (^COPromiseConstructor)(COPromiseFulfill fullfill, COPromiseReject 
 
 /**
  Fulfill the promise with a return value.
-
+ 
  @param value the value fulfilled.
  */
 - (void)fulfill:(nullable Value)value;
 
 /**
  Reject the promise with a error
-
+ 
  @param error the error.
  */
 - (void)reject:(NSError * _Nullable)error;
@@ -136,14 +113,14 @@ typedef void (^COPromiseConstructor)(COPromiseFulfill fullfill, COPromiseReject 
 
 /**
  Set the onCancelBlock.
-
+ 
  @param onCancelBlock will execute on the promise cancelled.
  */
 - (void)onCancel:(COPromiseOnCancelBlock _Nullable )onCancelBlock;
 
 /**
  Chained observe the promise fulfilled.
-
+ 
  @param work the observer worker.
  @return The chained promise instance.
  */
@@ -151,7 +128,7 @@ typedef void (^COPromiseConstructor)(COPromiseFulfill fullfill, COPromiseReject 
 
 /**
  Observe the promises rejected.
-
+ 
  @param reject the reject dealing worker.
  @return The chained promise instance.
  */
@@ -159,7 +136,7 @@ typedef void (^COPromiseConstructor)(COPromiseFulfill fullfill, COPromiseReject 
 
 /**
  Tell if the error is promise cancelled error
-
+ 
  @param error the error object
  @return is cancellled error.
  */
@@ -171,35 +148,35 @@ typedef void (^COPromiseConstructor)(COPromiseFulfill fullfill, COPromiseReject 
  COProgressPromise is a subclass of COPromise, use this promise can monitor the progress of a async task,
  COProgressPromise realize the NSFastEnumeration Protocol, so you can use the for ... in , like this:
  for(id progress in promise){
-    double value = [progress doubleValue];
+ double value = [progress doubleValue];
  }
  Usage:
  static COProgressPromise* progressDownloadFileFromUrl(NSString *url){
-     COProgressPromise *promise = [COProgressPromise promise];
-     [NSURLSession sharedSession].configuration.requestCachePolicy = NSURLRequestReloadIgnoringCacheData;
-     NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:[NSURL URLWithString:url] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-         if (error) {
-         [promise reject:error];
-         }
-         else{
-         [promise fulfill:data];
-         }
-     }];
-     [task resume];
-     // setup progress
-     [promise setupWithProgress:task.progress];
-     return promise;
+ COProgressPromise *promise = [COProgressPromise promise];
+ [NSURLSession sharedSession].configuration.requestCachePolicy = NSURLRequestReloadIgnoringCacheData;
+ NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:[NSURL URLWithString:url] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+ if (error) {
+ [promise reject:error];
+ }
+ else{
+ [promise fulfill:data];
+ }
+ }];
+ [task resume];
+ // setup progress
+ [promise setupWithProgress:task.progress];
+ return promise;
  }
  
  co_launch(^{
-     COProgressPromise *promise = progressDownloadFileFromUrl(@"http://img17.3lian.com/d/file/201701/17/9a0d018ba683b9cbdcc5a7267b90891c.jpg");
-     for(id p in promise){
-         double v = [p doubleValue];
-         NSLog(@"current progress: %f", (float)v);
-     }
-     // get the download result
-     NSData *data = await(promise);
-     // handle data
+ COProgressPromise *promise = progressDownloadFileFromUrl(@"http://img17.3lian.com/d/file/201701/17/9a0d018ba683b9cbdcc5a7267b90891c.jpg");
+ for(id p in promise){
+ double v = [p doubleValue];
+ NSLog(@"current progress: %f", (float)v);
+ }
+ // get the download result
+ NSData *data = await(promise);
+ // handle data
  });
  
  */

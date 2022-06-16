@@ -1,25 +1,3 @@
-//
-//  COPromise.m
-//  coobjc
-//
-//  Copyright © 2018 Alibaba Group Holding Limited All rights reserved.
-//  Copyright 2018 Google Inc. All rights reserved.
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-//
-//
-//    Reference code from: [FBLPromise](https://github.com/google/promises)
-
 #import "COPromise.h"
 #import "COChan.h"
 #import "COCoroutine.h"
@@ -34,6 +12,7 @@ typedef NS_ENUM(NSInteger, COPromiseState) {
 
 NSString *const COPromiseErrorDomain = @"COPromiseErrorDomain";
 
+// 定义一个专门的值, 来当做 Error 中 cancle 的标识, 这是一个非常通用的做法.
 enum {
     COPromiseCancelledError = -2341,
 };
@@ -43,10 +22,13 @@ typedef void (^COPromiseObserver)(COPromiseState state, id __nullable resolution
 @interface COPromise<Value>()
 {
     COPromiseState _state;
+    // 把所有的, 回调存储起来.
     NSMutableArray<COPromiseObserver> *_observers;
+    // 如果在 Swfit 里面, 这就是一个 Result 类型的值.
+    // 但是在 OC 里面, 就需要两个值来进行存储.
     id __nullable _value;
     NSError *__nullable _error;
-    @protected
+@protected
     dispatch_semaphore_t    _lock;
 }
 
@@ -64,14 +46,22 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
     self = [super init];
     if (self) {
         COOBJC_LOCK_INIT(_lock);
+        // LOCK = dispatch_semaphore_create(1)
+        // 使用, 信号量来当做锁的实现.
     }
     return self;
 }
 
+// typedef void (^COPromiseConstructor)(COPromiseFulfill fullfill, COPromiseReject reject);
 - (instancetype)initWithContructor:(COPromiseConstructor)constructor dispatch:(CODispatch*)dispatch {
     self = [self init];
     if (self) {
         if (constructor) {
+            /*
+             和 Promise 的设计是一样的, 将改变内部状态的函数进行封装, 然后传递出去.
+             constructor 其实就是触发异步函数的地方, 在异步函数的回调里面, 调用 fulfill, reject 来真正的进行数据的改变.
+             然后 Promise 的数据改变, 会触发后续的操作.
+             */
             COPromiseFulfill fulfill = ^(id value){
                 [self fulfill:value];
             };
@@ -101,6 +91,17 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
 + (instancetype)promise:(COPromiseConstructor)constructor onQueue:(dispatch_queue_t)queue {
     return [[self alloc] initWithContructor:constructor dispatch:[CODispatch dispatchWithQueue:queue]];
 }
+/*
+#define COOBJC_LOCK(LOCK)               dispatch_semaphore_wait(LOCK, DISPATCH_TIME_FOREVER)
+#define COOBJC_UNLOCK(LOCK)             dispatch_semaphore_signal(LOCK)
+ */
+/*
+ #define COOBJC_SCOPELOCK(LOCK)          COOBJC_LOCK(LOCK); \
+ COOBJC_LOCK_TYPE COOBJC_CONCAT(auto_lock_, __LINE__) __attribute__((cleanup(COOBJC_unlock), unused)) = LOCK
+ 
+ COOBJC_SCOPELOCK 中, 定义了一个可以自动放开锁的东西.
+ 使用 C 语言独特的写法, 实现了 Defer 的效果.
+ */
 
 - (BOOL)isPending {
     COOBJC_SCOPELOCK(_lock);
@@ -138,20 +139,19 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
     
     do {
         COOBJC_SCOPELOCK(_lock);
+        // 必须, 是在 Pending 下, 调用 FullFill 才可以.
         if (_state == COPromiseStatePending) {
             _state = COPromiseStateFulfilled;
             state = _state;
             _value = value;
             observers = [_observers copy];
             _observers = nil;
-        }
-        else{
-//            NSAssert(NO, @"Promise fulfill multitimes, you should check your logic");
+        } else{
             return;
         }
-        
     } while(0);
-
+    
+    // 在实现了之后, 调用所有的回调.
     if (observers.count > 0) {
         for (COPromiseObserver observer in observers) {
             observer(state, value);
@@ -174,19 +174,22 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
             _observers = nil;
         }
         else{
-//            NSAssert(NO, @"Promise reject multitimes, you should check your logic");
             return;
         }
         
     } while(0);
     
     for (COPromiseObserver observer in observers) {
+        // 失败的场景, 就是传入的是 Error.
         observer(state, error);
     }
 }
 
 + (BOOL)isPromiseCancelled:(NSError *)error {
-    if ([error.domain isEqualToString:COPromiseErrorDomain] && error.code == COPromiseCancelledError) {
+    // 使用, COPromiseErrorDomain 这个特殊的字符, 来保证, Error 是 Promise 相关的 Error.
+    // 使用 COPromiseCancelledError 这个特殊的 Int, 来确保, Error 是 cancel 类型的.
+    if ([error.domain isEqualToString:COPromiseErrorDomain] &&
+        error.code == COPromiseCancelledError) {
         return YES;
     } else {
         return NO;
@@ -197,9 +200,11 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
     [self reject:[NSError errorWithDomain:COPromiseErrorDomain code:COPromiseCancelledError userInfo:@{NSLocalizedDescriptionKey: @"Promise was cancelled."}]];
 }
 
+// 这种, 使用 on 开头的注册回调的方式, 是非常非常普遍的.
 - (void)onCancel:(COPromiseOnCancelBlock)onCancelBlock {
     if (onCancelBlock) {
         __weak typeof(self) weakSelf = self;
+        // catch 是给 所有的 Error 加回调, 如果是 cancle 的, 那么就调用
         [self catch:^(NSError * _Nonnull error) {
             if ([COPromise isPromiseCancelled:error]) {
                 onCancelBlock(weakSelf);
@@ -217,7 +222,7 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
     COPromiseState state = COPromiseStatePending;
     id value = nil;
     NSError *error = nil;
-
+    
     do {
         COOBJC_SCOPELOCK(_lock);
         switch (_state) {
@@ -262,21 +267,22 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
         if (onFulfill) {
             onFulfill(value);
         }
-    }
-    else if(state == COPromiseStateRejected){
+    } else if(state == COPromiseStateRejected){
         if (onReject) {
             onReject(error);
         }
     }
 }
 
-
+// 这里的实现, 和标准的 Promise 是一样的.
+// 有一个中介 Promise.
 - (COPromise *)chainedPromiseWithFulfill:(COPromiseChainedFulfillBlock)chainedFulfill
-                            chainedReject:(COPromiseChainedRejectBlock)chainedReject {
+                           chainedReject:(COPromiseChainedRejectBlock)chainedReject {
     
     COPromise *promise = [COPromise promise];
     __auto_type resolver = ^(id __nullable value, BOOL isReject) {
         if ([value isKindOfClass:[COPromise class]]) {
+            // 标准的 PROMISE 的使用方式.
             [(COPromise *)value observeWithFulfill:^(id  _Nullable value) {
                 [promise fulfill:value];
             } reject:^(NSError *error) {
@@ -295,6 +301,7 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
         value = chainedFulfill ? chainedFulfill(value) : value;
         resolver(value, NO);
     } reject:^(NSError *error) {
+        // 如果, chainedReject 把一个 Error 又变为了一个 Promise, 那这其实是一个 catch error resume 的操作.
         id value = chainedReject ? chainedReject(error) : error;
         resolver(value, YES);
     }];
@@ -311,10 +318,11 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
         if (reject) {
             reject(error);
         }
+        // 还要继续传递给后方的节点.
         return error;
     }];
 }
-    
+
 @end
 
 @interface COProgressValue : NSObject
@@ -383,8 +391,8 @@ static void *COProgressObserverContext = &COProgressObserverContext;
     
     if (oldProgress) {
         [oldProgress removeObserver:self
-                      forKeyPath:NSStringFromSelector(@selector(fractionCompleted))
-                         context:COProgressObserverContext];
+                         forKeyPath:NSStringFromSelector(@selector(fractionCompleted))
+                            context:COProgressObserverContext];
     }
     if (progress) {
         [progress addObserver:self
@@ -436,11 +444,11 @@ static void *COProgressObserverContext = &COProgressObserverContext;
 }
 
 - (void)dealloc{
-   
+    
     if (_progress) {
         [_progress removeObserver:self
-                         forKeyPath:NSStringFromSelector(@selector(fractionCompleted))
-                            context:COProgressObserverContext];
+                       forKeyPath:NSStringFromSelector(@selector(fractionCompleted))
+                          context:COProgressObserverContext];
     }
 }
 

@@ -88,11 +88,11 @@ func test() {
 extension URLSession {
     
     public func dataTask(with url: URL) -> Promise<(Data?, URLResponse?)> {
-        
         let promise = Promise<(Data?, URLResponse?)>()
         
+        // 这种, Promise 的设计, 是一个非常非常通用的思路.
+        // Promise 和 Future 其实是一个设计思路.
         let task = self.dataTask(with: url) { (data, response, error) in
-            
             if error != nil {
                 promise.reject(error: error!)
             } else {
@@ -123,6 +123,7 @@ public class DataService {
         
         let location = CLLocation(latitude: 0, longitude: 0)
         guard var components = URLComponents(string:urlPath) else {
+            // 使用 Throw 来抛出错误, 这是非常符合 Swift 设计思路的一种方案.
             throw NSError(domain: "DataService", code: -1, userInfo: [NSLocalizedDescriptionKey : "Invalid URL."])
             
         }
@@ -140,7 +141,7 @@ public class DataService {
         
         var ret = ""
         
-        
+        // 在这里, 会发生协程的任务切换.
         let result = try _await(closure: {
             session.dataTask(with: url!)
         })
