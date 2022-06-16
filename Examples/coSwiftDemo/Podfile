@@ -7,6 +7,8 @@ target 'coSwiftDemo' do
 
   pod 'coswift', :path => '../../'
   pod 'cocore', :path => '../../'
+  pod 'coobjc', :path => '../../'
+  pod 'cokit', :path => '../../'
   # Pods for coSwiftDemo
 
 end

@@ -267,11 +267,15 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-coSwiftDemo/Pods-coSwiftDemo-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/cocore-iOS10.0/cocore.framework",
+				"${BUILT_PRODUCTS_DIR}/cokit/cokit.framework",
+				"${BUILT_PRODUCTS_DIR}/coobjc/coobjc.framework",
 				"${BUILT_PRODUCTS_DIR}/coswift-iOS10.0/coswift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/cocore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/cokit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/coobjc.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/coswift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
