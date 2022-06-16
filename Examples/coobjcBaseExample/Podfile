@@ -6,6 +6,7 @@ target 'coobjcBaseExample' do
 
 pod 'coobjc', :path => '../../'
 pod 'cocore', :path => '../../'
+#pod 'cokit', :path => '../../'
 
 end
 

@@ -373,8 +373,8 @@
 			isa = PBXGroup;
 			children = (
 				1811EEEC21B0E22A00BC0A52 /* KMDiscoverListCell.h */,
-				1811EEED21B0E22A00BC0A52 /* KMDiscoverListViewController.h */,
 				1811EEEE21B0E22A00BC0A52 /* KMDiscoverListCell.m */,
+				1811EEED21B0E22A00BC0A52 /* KMDiscoverListViewController.h */,
 				1811EEEF21B0E22A00BC0A52 /* KMDiscoverListViewController.m */,
 			);
 			path = "Discover List";
