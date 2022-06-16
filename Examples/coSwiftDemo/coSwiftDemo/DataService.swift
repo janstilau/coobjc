@@ -69,12 +69,12 @@ func co_fetchSomething() -> Chan<String> {
 func test() {
     
     co_launch {
-        let resultStr = try await(channel: co_fetchSomething())
+        let resultStr = try _await(channel: co_fetchSomething())
         print("result: \(resultStr)")
     }
     
     co_launch {
-        let result = try await(promise: co_fetchSomethingAsynchronous())
+        let result = try _await(promise: co_fetchSomethingAsynchronous())
         switch result {
         case .fulfilled(let data):
             print("data: \(String(describing: data))")
@@ -141,7 +141,7 @@ public class DataService {
         var ret = ""
         
         
-        let result = try await (closure: {
+        let result = try _await(closure: {
             session.dataTask(with: url!)
         })
         
