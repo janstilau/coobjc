@@ -237,7 +237,7 @@ describe(@"Proimse tests", ^{
         
         co_launch(^{
             
-            id result = await(testPromise1());
+            id result = _await(testPromise1());
             val = [result integerValue];
             expect(val).to.equal(11);
         });
@@ -253,7 +253,7 @@ describe(@"Proimse tests", ^{
         __block NSInteger val = 0;
         co_launch(^{
             
-            id result = await(testPromise2());
+            id result = _await(testPromise2());
             if (!result) {
                 NSError *error = co_getError();
                 expect(error).to.equal([NSError errorWithDomain:@"hehe" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"hehe1"}]);
@@ -274,7 +274,7 @@ describe(@"Proimse tests", ^{
         __block NSInteger val = 44;
         COCoroutine *co = co_launch(^{
             
-            id result = await(testPromise3());
+            id result = _await(testPromise3());
             if (!result) {
                 NSError *error = co_getError();
                 expect([COPromise isPromiseCancelled:error]).to.beTruthy();
@@ -301,7 +301,7 @@ describe(@"Proimse tests", ^{
         __block NSInteger val = 44;
         COCoroutine *co = co_launch(^{
             
-            id result = await(testPromise3());
+            id result = _await(testPromise3());
             if (!result) {
                 NSError *error = co_getError();
                 val = 12;
@@ -347,7 +347,7 @@ describe(@"Proimse tests", ^{
     
     it(@"https://github.com/alibaba/coobjc/issues/26", ^{
         co_launch(^{
-            id dd = await(downloadImageWithError());
+            id dd = _await(downloadImageWithError());
             expect(co_getError()).notTo.equal(nil);
         });
         waitUntil(^(DoneCallback done) {
@@ -367,7 +367,7 @@ describe(@"Proimse tests", ^{
                 progressCount++;
             }
             expect(progressCount > 0).beTruthy();
-            NSData *data = await(promise);
+            NSData *data = _await(promise);
             expect(data.length > 0).beTruthy();
         });
         waitUntil(^(DoneCallback done) {
@@ -390,7 +390,7 @@ describe(@"Proimse tests", ^{
                 progressCount++;
             }
             expect(progressCount > 0).beTruthy();
-            NSData *data = await(promise);
+            NSData *data = _await(promise);
             expect(data.length > 0).beTruthy();
         });
         waitUntil(^(DoneCallback done) {
@@ -404,7 +404,7 @@ describe(@"Proimse tests", ^{
         co_launch(^{
             int progressCount = 0;
             COProgressPromise *promise = progressDownloadFileFromUrl(@"https://github.com/alibaba/coobjc/archive/refs/heads/master.zip");
-            NSData *data = await(promise);
+            NSData *data = _await(promise);
             expect(data.length > 0).beTruthy();
         });
         waitUntil(^(DoneCallback done) {
@@ -428,7 +428,7 @@ describe(@"Proimse tests", ^{
                 progressCount++;
             }
             expect(progressCount > 0).to.beTruthy();
-            NSData *data = await(promise);
+            NSData *data = _await(promise);
             expect(data == nil).beTruthy();
             expect(co_getError() != nil).beTruthy();
             step = 11;
@@ -449,9 +449,9 @@ describe(@"Proimse tests", ^{
             id p1 = testPromise21();
             id p2 = testPromise22();
             
-            NSString *r1 = await(p1);
+            NSString *r1 = _await(p1);
             expect(r1).to.equal(@"1");
-            NSString *r2 = await(p2);
+            NSString *r2 = _await(p2);
             expect(r2).to.equal(@"2");
             
             NSTimeInterval duration = CACurrentMediaTime() - begin;
@@ -476,7 +476,7 @@ describe(@"background Thread Proimse tests", ^{
         [[TestThreadObject1 sharedInstance] runBlock:^{
             co_launch(^{
                 
-                id result = await(testPromise1());
+                id result = _await(testPromise1());
                 val = [result integerValue];
                 expect(val).to.equal(11);
             });
@@ -496,7 +496,7 @@ describe(@"background Thread Proimse tests", ^{
         [[TestThreadObject1 sharedInstance] runBlock:^{
             co_launch(^{
                 
-                id result = await(testPromise2());
+                id result = _await(testPromise2());
                 if (!result) {
                     NSError *error = co_getError();
                     expect(error).to.equal([NSError errorWithDomain:@"hehe" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"hehe1"}]);
@@ -521,7 +521,7 @@ describe(@"background Thread Proimse tests", ^{
         [[TestThreadObject1 sharedInstance] runBlock:^{
             co = co_launch(^{
                 
-                id result = await(testPromise3());
+                id result = _await(testPromise3());
                 if (!result) {
                     NSError *error = co_getError();
                     expect([COPromise isPromiseCancelled:error]).to.beTruthy();
@@ -552,7 +552,7 @@ describe(@"background Thread Proimse tests", ^{
         [[TestThreadObject1 sharedInstance] runBlock:^{
             co = co_launch(^{
                 
-                id result = await(testPromise3());
+                id result = _await(testPromise3());
                 if (!result) {
                     NSError *error = co_getError();
                     val = 12;
@@ -604,7 +604,7 @@ describe(@"background Thread Proimse tests", ^{
         
         [[TestThreadObject1 sharedInstance] runBlock:^{
             co_launch(^{
-                id dd = await(downloadImageWithError());
+                id dd = _await(downloadImageWithError());
                 expect(co_getError()).notTo.equal(nil);
             });
         }];
@@ -627,7 +627,7 @@ describe(@"background Thread Proimse tests", ^{
                     progressCount++;
                 }
                 expect(progressCount > 0).beTruthy();
-                NSData *data = await(promise);
+                NSData *data = _await(promise);
                 expect(data.length > 0).beTruthy();
             });
         }];
@@ -654,7 +654,7 @@ describe(@"background Thread Proimse tests", ^{
                     progressCount++;
                 }
                 expect(progressCount > 0).beTruthy();
-                NSData *data = await(promise);
+                NSData *data = _await(promise);
                 expect(data.length > 0).beTruthy();
             });
         }];
@@ -671,7 +671,7 @@ describe(@"background Thread Proimse tests", ^{
             co_launch(^{
                 int progressCount = 0;
                 COProgressPromise *promise = progressDownloadFileFromUrl(@"https://github.com/alibaba/coobjc/archive/refs/heads/master.zip");
-                NSData *data = await(promise);
+                NSData *data = _await(promise);
                 expect(data.length > 0).beTruthy();
             });
         }];
@@ -699,7 +699,7 @@ describe(@"background Thread Proimse tests", ^{
                     progressCount++;
                 }
 //                expect(progressCount).to.equal(1);
-                NSData *data = await(promise);
+                NSData *data = _await(promise);
                 expect(data == nil).beTruthy();
                 expect(co_getError() != nil).beTruthy();
                 step = 11;
@@ -723,9 +723,9 @@ describe(@"background Thread Proimse tests", ^{
                 id p1 = testPromise21();
                 id p2 = testPromise22();
                 
-                NSString *r1 = await(p1);
+                NSString *r1 = _await(p1);
                 expect(r1).to.equal(@"1");
-                NSString *r2 = await(p2);
+                NSString *r2 = _await(p2);
                 expect(r2).to.equal(@"2");
                 
                 NSTimeInterval duration = CACurrentMediaTime() - begin;

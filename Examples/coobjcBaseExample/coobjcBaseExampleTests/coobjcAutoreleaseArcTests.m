@@ -119,7 +119,7 @@ static dispatch_queue_t get_test_queue1(){
         
         co_delay(1);
 
-        int state = [await([countActor sendMessage:@{@"type":@"get", @"tag":@"testEnableAutoreleasePool"}]) intValue];
+        int state = [_await([countActor sendMessage:@{@"type":@"get", @"tag":@"testEnableAutoreleasePool"}]) intValue];
         
         XCTAssert(state == 10);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -141,7 +141,7 @@ static dispatch_queue_t get_test_queue1(){
             for (int i = 0; i < 10; i++) {
                 __autoreleasing TestDeallocator *d = [[TestDeallocator alloc] initWithTag:@"testEnableAutoreleasePoolAwait"];
             }
-            id val = await([self makeAsynPromise]);
+            id val = _await([self makeAsynPromise]);
             //TODO: NSLog会导致autorelease崩溃
             printf("%d\n", [val intValue]);
             for (int i = 0; i < 10; i++) {
@@ -151,7 +151,7 @@ static dispatch_queue_t get_test_queue1(){
         
         co_delay(1);
 
-        int state = [await([countActor sendMessage:@{@"type":@"get", @"tag":@"testEnableAutoreleasePoolAwait"}]) intValue];
+        int state = [_await([countActor sendMessage:@{@"type":@"get", @"tag":@"testEnableAutoreleasePoolAwait"}]) intValue];
 
         XCTAssert(state == 20);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -180,7 +180,7 @@ static dispatch_queue_t get_test_queue1(){
             
         }
         co_delay(1);
-        int state = [await([countActor sendMessage:@{@"type":@"get", @"tag":@"testEnableAutoreleasePoolNSLog"}]) intValue];
+        int state = [_await([countActor sendMessage:@{@"type":@"get", @"tag":@"testEnableAutoreleasePoolNSLog"}]) intValue];
 
         XCTAssert(state == 20);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -238,7 +238,7 @@ static dispatch_queue_t get_test_queue1(){
                 }
             }
             
-            id val = await([self makeAsynPromise]);
+            id val = _await([self makeAsynPromise]);
             //TODO: NSLog会导致autorelease崩溃
             NSLog(@"%@", val);
             {
@@ -248,7 +248,7 @@ static dispatch_queue_t get_test_queue1(){
                     }
                 }
             }
-            val = await([self makeAsynPromise]);
+            val = _await([self makeAsynPromise]);
             //TODO: NSLog会导致autorelease崩溃
             NSLog(@"%@", val);
             
@@ -263,7 +263,7 @@ static dispatch_queue_t get_test_queue1(){
         co_delay(1);
 
         
-        int state = [await([countActor sendMessage:@{@"type":@"get", @"tag":@"testAutoreleasePoolNested"}]) intValue];
+        int state = [_await([countActor sendMessage:@{@"type":@"get", @"tag":@"testAutoreleasePoolNested"}]) intValue];
 
         
         XCTAssert(state == 30);
@@ -300,7 +300,7 @@ static dispatch_queue_t get_test_queue1(){
                 //            co_autoreleasePoolPop(ctx1);
             }
             
-            id val = await([self makeAsynPromise]);
+            id val = _await([self makeAsynPromise]);
             //TODO: NSLog会导致autorelease崩溃
             NSLog(@"%@", val);
             {
@@ -311,7 +311,7 @@ static dispatch_queue_t get_test_queue1(){
                 }
                 
             }
-            val = await([self makeAsynPromise]);
+            val = _await([self makeAsynPromise]);
             //TODO: NSLog会导致autorelease崩溃
             NSLog(@"%@", val);
             
@@ -326,7 +326,7 @@ static dispatch_queue_t get_test_queue1(){
         co_delay(1);
 
         
-        int state = [await([countActor sendMessage:@{@"type":@"get", @"tag":@"testAutoreleasePoolNestedUnbanlance"}]) intValue];
+        int state = [_await([countActor sendMessage:@{@"type":@"get", @"tag":@"testAutoreleasePoolNestedUnbanlance"}]) intValue];
 
         
         XCTAssert(state == 30);
@@ -345,7 +345,7 @@ static dispatch_queue_t get_test_queue1(){
         NSArray *list = @[@1, @2, @3, @4, @5, @6];
         [list enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             NSLog(@"%@", obj);
-            id value = await([self makeAsynPromise]);
+            id value = _await([self makeAsynPromise]);
             NSLog(@"%@", value);
         }];
         [e fulfill];

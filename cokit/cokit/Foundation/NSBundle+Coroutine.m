@@ -43,7 +43,7 @@
 
 - (BOOL)co_loadAndReturnError:(NSError **)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_load]) boolValue];
+        BOOL ret = [_await([self async_load]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();

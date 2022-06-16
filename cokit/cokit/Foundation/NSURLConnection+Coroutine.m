@@ -47,7 +47,7 @@
     if ([COCoroutine currentCoroutine]) {
         NSURLResponse *resp = nil;
         NSData *data = nil;
-        co_unpack(&resp, &data) = await([self async_sendAsynchronousRequest:request queue:queue]);
+        co_unpack(&resp, &data) = _await([self async_sendAsynchronousRequest:request queue:queue]);
         if (error) {
             *error = co_getError();
         }

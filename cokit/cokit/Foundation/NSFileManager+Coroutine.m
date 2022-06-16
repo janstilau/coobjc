@@ -23,7 +23,7 @@
 
 - (BOOL)co_createDirectoryAtURL:(NSURL *)url withIntermediateDirectories:(BOOL)createIntermediates attributes:(NSDictionary<NSFileAttributeKey,id> *)attributes error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_createDirectoryAtURL:url withIntermediateDirectories:createIntermediates attributes:attributes]) boolValue];
+        BOOL ret = [_await([self async_createDirectoryAtURL:url withIntermediateDirectories:createIntermediates attributes:attributes]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -41,7 +41,7 @@
 
 - (BOOL)co_createSymbolicLinkAtURL:(NSURL *)url withDestinationURL:(NSURL *)destURL error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_createSymbolicLinkAtURL:url withDestinationURL:destURL]) boolValue];
+        BOOL ret = [_await([self async_createSymbolicLinkAtURL:url withDestinationURL:destURL]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -59,7 +59,7 @@
 
 - (BOOL)co_setAttributes:(NSDictionary<NSFileAttributeKey,id> *)attributes ofItemAtPath:(NSString *)path error:(NSError**)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_setAttributes:attributes ofItemAtPath:path]) boolValue];
+        BOOL ret = [_await([self async_setAttributes:attributes ofItemAtPath:path]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -77,7 +77,7 @@
 
 - (BOOL)co_createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates attributes:(NSDictionary<NSFileAttributeKey,id> *)attributes error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_createDirectoryAtPath:path withIntermediateDirectories:createIntermediates attributes:attributes]) boolValue];
+        BOOL ret = [_await([self async_createDirectoryAtPath:path withIntermediateDirectories:createIntermediates attributes:attributes]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -95,7 +95,7 @@
 
 - (NSArray<NSString *> *)co_contentsOfDirectoryAtPath:(NSString *)path error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        NSArray *list = await([self async_contentsOfDirectoryAtPath:path]);
+        NSArray *list = _await([self async_contentsOfDirectoryAtPath:path]);
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -113,7 +113,7 @@
 
 - (NSArray<NSString *> *)co_subpathsOfDirectoryAtPath:(NSString *)path error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        NSArray *list = await([self async_subpathsOfDirectoryAtPath:path]);
+        NSArray *list = _await([self async_subpathsOfDirectoryAtPath:path]);
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -131,7 +131,7 @@
 
 - (NSDictionary<NSFileAttributeKey,id> *)co_attributesOfItemAtPath:(NSString *)path error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        NSDictionary *attr = await([self async_attributesOfItemAtPath:path]);
+        NSDictionary *attr = _await([self async_attributesOfItemAtPath:path]);
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -149,7 +149,7 @@
 
 - (NSDictionary<NSFileAttributeKey,id> *)co_attributesOfFileSystemForPath:(NSString *)path error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        NSDictionary *attr = await([self async_attributesOfFileSystemForPath:path]);
+        NSDictionary *attr = _await([self async_attributesOfFileSystemForPath:path]);
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -167,7 +167,7 @@
 
 - (BOOL)co_createSymbolicLinkAtPath:(NSString *)path withDestinationPath:(NSString *)destPath error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_createSymbolicLinkAtPath:path withDestinationPath:destPath]) boolValue];
+        BOOL ret = [_await([self async_createSymbolicLinkAtPath:path withDestinationPath:destPath]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -185,7 +185,7 @@
 
 - (NSString *)co_destinationOfSymbolicLinkAtPath:(NSString *)path error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        NSString *dest = await([self async_destinationOfSymbolicLinkAtPath:path]);
+        NSString *dest = _await([self async_destinationOfSymbolicLinkAtPath:path]);
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -203,7 +203,7 @@
 
 - (BOOL)co_copyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath error:(NSError**)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_copyItemAtPath:srcPath toPath:dstPath]) boolValue];
+        BOOL ret = [_await([self async_copyItemAtPath:srcPath toPath:dstPath]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -221,7 +221,7 @@
 
 - (BOOL)co_moveItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_moveItemAtPath:srcPath toPath:dstPath]) boolValue];
+        BOOL ret = [_await([self async_moveItemAtPath:srcPath toPath:dstPath]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -239,7 +239,7 @@
 
 - (BOOL)co_linkItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_linkItemAtPath:srcPath toPath:dstPath]) boolValue];
+        BOOL ret = [_await([self async_linkItemAtPath:srcPath toPath:dstPath]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -257,7 +257,7 @@
 
 - (BOOL)co_removeItemAtPath:(NSString *)path error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_removeItemAtPath:path]) boolValue];
+        BOOL ret = [_await([self async_removeItemAtPath:path]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -275,7 +275,7 @@
 
 - (BOOL)co_copyItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_copyItemAtURL:srcURL toURL:dstURL]) boolValue];
+        BOOL ret = [_await([self async_copyItemAtURL:srcURL toURL:dstURL]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -293,7 +293,7 @@
 
 - (BOOL)co_moveItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_moveItemAtURL:srcURL toURL:dstURL]) boolValue];
+        BOOL ret = [_await([self async_moveItemAtURL:srcURL toURL:dstURL]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -311,7 +311,7 @@
 
 - (BOOL)co_linkItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_linkItemAtURL:srcURL toURL:dstURL]) boolValue];
+        BOOL ret = [_await([self async_linkItemAtURL:srcURL toURL:dstURL]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -329,7 +329,7 @@
 
 - (BOOL)co_removeItemAtURL:(NSURL *)URL error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_removeItemAtURL:URL]) boolValue];
+        BOOL ret = [_await([self async_removeItemAtURL:URL]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -347,7 +347,7 @@
 
 - (BOOL)co_trashItemAtURL:(NSURL *)url resultingItemURL:(NSURL *__autoreleasing  _Nullable *)outResultingURL error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_trashItemAtURL:url resultingItemURL:outResultingURL]) boolValue];
+        BOOL ret = [_await([self async_trashItemAtURL:url resultingItemURL:outResultingURL]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -366,7 +366,7 @@
 - (BOOL)co_fileExistsAtPath:(NSString *)path isDirectory:(BOOL * _Nullable)isDirectory{
     if ([COCoroutine currentCoroutine]) {
         id ret, isDir;
-        co_unpack(&ret, &isDir) = await([self async_fileExistsAtPath:path]);
+        co_unpack(&ret, &isDir) = _await([self async_fileExistsAtPath:path]);
         if (isDirectory) {
             *isDirectory = [isDir boolValue];
         }
@@ -379,7 +379,7 @@
 
 - (BOOL)co_isReadableFileAtPath:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_isReadableFileAtPath:path]) boolValue];
+        return [_await([self async_isReadableFileAtPath:path]) boolValue];
     }
     else{
         return [self isReadableFileAtPath:path];
@@ -388,7 +388,7 @@
 
 - (BOOL)co_isWritableFileAtPath:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_isWritableFileAtPath:path]) boolValue];
+        return [_await([self async_isWritableFileAtPath:path]) boolValue];
     }
     else{
         return [self isWritableFileAtPath:path];
@@ -397,7 +397,7 @@
 
 - (BOOL)co_isDeletableFileAtPath:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_isDeletableFileAtPath:path]) boolValue];
+        return [_await([self async_isDeletableFileAtPath:path]) boolValue];
     }
     else{
         return [self isDeletableFileAtPath:path];
@@ -406,7 +406,7 @@
 
 - (BOOL)co_isExecutableFileAtPath:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_isExecutableFileAtPath:path]) boolValue];
+        return [_await([self async_isExecutableFileAtPath:path]) boolValue];
     }
     else{
         return [self isExecutableFileAtPath:path];
@@ -415,7 +415,7 @@
 
 - (BOOL)co_contentsEqualAtPath:(NSString *)path1 andPath:(NSString *)path2{
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_contentsEqualAtPath:path1 andPath:path2]) boolValue];
+        return [_await([self async_contentsEqualAtPath:path1 andPath:path2]) boolValue];
     }
     else{
         return [self contentsEqualAtPath:path1 andPath:path2];
@@ -424,7 +424,7 @@
 
 - (NSArray<NSString *> *)co_subpathsAtPath:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_subpathsAtPath:path]);
+        return _await([self async_subpathsAtPath:path]);
     }
     else{
         return [self subpathsAtPath:path];
@@ -433,7 +433,7 @@
 
 - (NSData *)co_contentsAtPath:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_contentsAtPath:path]);
+        return _await([self async_contentsAtPath:path]);
     }
     else{
         return [self contentsAtPath:path];
@@ -442,7 +442,7 @@
 
 - (BOOL)co_createFileAtPath:(NSString *)path contents:(NSData *)data attributes:(NSDictionary<NSFileAttributeKey,id> *)attr{
     if([COCoroutine currentCoroutine]){
-        return [await([self async_createFileAtPath:path contents:data attributes:attr]) boolValue];
+        return [_await([self async_createFileAtPath:path contents:data attributes:attr]) boolValue];
     }
     else{
         return [self createFileAtPath:path contents:data attributes:attr];
@@ -451,7 +451,7 @@
 
 - (BOOL)co_replaceItemAtURL:(NSURL *)originalItemURL withItemAtURL:(NSURL *)newItemURL backupItemName:(NSString *)backupItemName options:(NSFileManagerItemReplacementOptions)options resultingItemURL:(NSURL *__autoreleasing  _Nullable *)resultingURL error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_replaceItemAtURL:originalItemURL withItemAtURL:newItemURL backupItemName:backupItemName options:options resultingItemURL:resultingURL]) boolValue];
+        BOOL ret = [_await([self async_replaceItemAtURL:originalItemURL withItemAtURL:newItemURL backupItemName:backupItemName options:options resultingItemURL:resultingURL]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();

@@ -88,7 +88,7 @@ describe(@"actor tests", ^{
             [actor sendMessage:@(-1)];
 
             COActorCompletable *completable = [actor sendMessage:@(2)];
-            id result = await(completable);
+            id result = _await(completable);
             val = [result intValue];
             [actor cancel];
         });
@@ -127,7 +127,7 @@ describe(@"actor tests", ^{
             
             
             COActorCompletable *completable = [actor sendMessage:@(2)];
-            id result = await(completable);
+            id result = _await(completable);
             val = [result intValue];
             [actor cancel];
         });
@@ -168,7 +168,7 @@ describe(@"actor tests", ^{
             [actor sendMessage:@(-1)];
             
             COActorCompletable *completable = [actor sendMessage:@(2)];
-            id result = await(completable);
+            id result = _await(completable);
             val = [result intValue];
             [actor cancel];
         });
@@ -211,7 +211,7 @@ describe(@"actor tests", ^{
             [actor sendMessage:@(-1)];
             
             COActorCompletable *completable = [actor sendMessage:@(2)];
-            id result = await(completable);
+            id result = _await(completable);
             val = [result intValue];
 //            NSLog(@"actor cancel");
             [actor cancel];
@@ -246,25 +246,25 @@ describe(@"actor tests", ^{
             [countActor sendMessage:@"inc"];
             [countActor sendMessage:@"inc"];
             [countActor sendMessage:@"inc"];
-            int currentCount = [await([countActor sendMessage:@"get"]) intValue];
+            int currentCount = [_await([countActor sendMessage:@"get"]) intValue];
         });
         co_launch_onqueue(dispatch_queue_create("counter queue1", NULL), ^{
             [countActor sendMessage:@"inc"];
             [countActor sendMessage:@"inc"];
             [countActor sendMessage:@"inc"];
             [countActor sendMessage:@"inc"];
-            int currentCount = [await([countActor sendMessage:@"get"]) intValue];
+            int currentCount = [_await([countActor sendMessage:@"get"]) intValue];
         });
     });
     
     it(@"error example", ^{
         COActor *actor = co_actor_onqueue(get_test_queue(), ^(COActorChan *channel) {
             for(COActorMessage *message in channel){
-                message.complete(await(test_promise()));
+                message.complete(_await(test_promise()));
             }
         });
         co_launch(^{
-            id value = await([actor sendMessage:@"test"]);
+            id value = _await([actor sendMessage:@"test"]);
             NSError *error = co_getError();
             XCTAssert(error.code == 100);
         });

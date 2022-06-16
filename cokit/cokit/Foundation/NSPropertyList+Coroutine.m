@@ -96,7 +96,7 @@
 
 + (BOOL)co_propertyList:(id)plist isValidForFormat:(NSPropertyListFormat)format{
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_propertyList:plist isValidForFormat:format]) boolValue];
+        return [_await([self async_propertyList:plist isValidForFormat:format]) boolValue];
     }
     else{
         return [self propertyList:plist isValidForFormat:format];
@@ -105,7 +105,7 @@
 
 + (NSData *)co_dataWithPropertyList:(id)plist format:(NSPropertyListFormat)format options:(NSPropertyListWriteOptions)opt error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        NSData *data = await([self async_dataWithPropertyList:plist format:format options:opt]);
+        NSData *data = _await([self async_dataWithPropertyList:plist format:format options:opt]);
         if (error) {
             *error = co_getError();
         }
@@ -118,7 +118,7 @@
 
 + (BOOL)co_writePropertyList:(id)plist toStream:(NSOutputStream *)stream format:(NSPropertyListFormat)format options:(NSPropertyListWriteOptions)opt error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_writePropertyList:plist toStream:stream format:format options:opt]) boolValue];
+        BOOL ret = [_await([self async_writePropertyList:plist toStream:stream format:format options:opt]) boolValue];
         if (error) {
             *error = co_getError();
         }
@@ -131,7 +131,7 @@
 
 + (id)co_propertyListWithData:(NSData *)data options:(NSPropertyListReadOptions)opt format:(NSPropertyListFormat *)format error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        id obj = await([self async_propertyListWithData:data options:opt format:format]);
+        id obj = _await([self async_propertyListWithData:data options:opt format:format]);
         if (error) {
             *error = co_getError();
         }
@@ -144,7 +144,7 @@
 
 + (id)co_propertyListWithStream:(NSInputStream *)stream options:(NSPropertyListReadOptions)opt format:(NSPropertyListFormat *)format error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        id obj = await([self async_propertyListWithStream:stream options:opt format:format]);
+        id obj = _await([self async_propertyListWithStream:stream options:opt format:format]);
         if (error) {
             *error = co_getError();
         }

@@ -164,7 +164,7 @@ describe(@"tuple with coroutine", ^{
             NSError *error = nil;
             
             
-            co_unpack(&dict, &response, &error) = await(cotest_downloadJSONWithURL(@"http://pytstore.oss-cn-shanghai.aliyuncs.com/monkey_live.json"));
+            co_unpack(&dict, &response, &error) = _await(cotest_downloadJSONWithURL(@"http://pytstore.oss-cn-shanghai.aliyuncs.com/monkey_live.json"));
             NSAssert(dict.count > 0, @"not load dict");
             NSAssert(response != nil, @"reponse is wrong");
             NSAssert(error == nil, @"error is wrong");
@@ -185,7 +185,7 @@ describe(@"tuple with coroutine", ^{
             NSError *error = nil;
             
             
-            co_unpack(&dict, &response, &error) = await(cotest_downloadJSONWithURL(@"http://pytstore.oss-cn-shanghai.aliyuncs.com/monkey_livexxxxxxxx.json"));
+            co_unpack(&dict, &response, &error) = _await(cotest_downloadJSONWithURL(@"http://pytstore.oss-cn-shanghai.aliyuncs.com/monkey_livexxxxxxxx.json"));
             NSAssert(dict == nil, @"not load dict");
             NSAssert(response != nil, @"reponse is wrong");
             NSAssert(error != nil, @"error is wrong");
@@ -204,7 +204,7 @@ describe(@"tuple with coroutine", ^{
             NSString *tmpFilePath = nil;
             NSData *data = nil;
             NSError *error = nil;
-            co_unpack(&tmpFilePath, &data, &error) = await(cotest_loadContentFromFile(filePath));
+            co_unpack(&tmpFilePath, &data, &error) = _await(cotest_loadContentFromFile(filePath));
             XCTAssert([tmpFilePath isEqualToString:filePath], @"file path is wrong");
             XCTAssert(data.length > 0, @"data is wrong");
             XCTAssert(error == nil, @"error is wrong");
@@ -223,7 +223,7 @@ describe(@"tuple with coroutine", ^{
             NSString *tmpFilePath = nil;
             NSData *data = nil;
             NSError *error = nil;
-            co_unpack(&tmpFilePath, &data, &error) = await(cotest_loadContentFromFile(filePath));
+            co_unpack(&tmpFilePath, &data, &error) = _await(cotest_loadContentFromFile(filePath));
             XCTAssert([tmpFilePath isEqualToString:filePath], @"file path is wrong");
             XCTAssert(data.length <= 0, @"data is wrong");
             XCTAssert(error != nil, @"error is wrong");

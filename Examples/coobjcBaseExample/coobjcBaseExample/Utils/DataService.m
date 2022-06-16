@@ -93,7 +93,7 @@
             for (COActorMessage *message in channel) {
                 NSString *url = [message stringType];
                 if (url.length > 0) {
-                    message.complete(await([self _getDataWithURL:url]));
+                    message.complete(_await([self _getDataWithURL:url]));
                 }
                 else{
                     message.complete(nil);
@@ -153,13 +153,13 @@
                         continue;
                     }
                     completable = [self.cacheActor sendMessage:@{@"type":@"load", @"id":url}];
-                    data = await(completable);
+                    data = _await(completable);
                     if (data) {
                         image = [[UIImage alloc] initWithData:data];
                     }
                     else{
                         completable = [self.networkActor sendMessage:url];
-                        data = await(completable);
+                        data = _await(completable);
                         if (data) {
                             image = [[UIImage alloc] initWithData:data];
                         }
@@ -183,7 +183,7 @@
                 json = nil;
                 if (url.length > 0) {
                     completable = [self.networkActor sendMessage:url];
-                    data = await(completable);
+                    data = _await(completable);
                     if (data) {
                         json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
                     }
@@ -200,25 +200,25 @@
 
 - (id)requestJSONWithURL:(NSString*)url CO_ASYNC{
     SURE_ASYNC
-    return await([self.jsonActor sendMessage:url]);
+    return _await([self.jsonActor sendMessage:url]);
 }
 
 - (void)saveDataToCache:(NSData*)data
          withIdentifier:(NSString*)identifier CO_ASYNC{
     SURE_ASYNC
     NSDictionary *msg = @{@"type":@"save", @"data":data, @"id":identifier};
-    await([self.cacheActor sendMessage:msg]);
+    _await([self.cacheActor sendMessage:msg]);
 }
 
 - (NSData*)getDataWithIdentifier:(NSString*)identifier CO_ASYNC{
     SURE_ASYNC
     NSDictionary *msg = @{@"type":@"load",  @"id":identifier};
-    return await([self.cacheActor sendMessage:msg]);
+    return _await([self.cacheActor sendMessage:msg]);
 }
 
 - (UIImage*)imageWithURL:(NSString*)url CO_ASYNC{
     SURE_ASYNC
-    return await([self.imageActor sendMessage:url]);
+    return _await([self.imageActor sendMessage:url]);
 }
 
 @end

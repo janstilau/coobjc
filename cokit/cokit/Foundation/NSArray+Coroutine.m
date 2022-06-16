@@ -24,7 +24,7 @@
 
 + (NSArray *)co_arrayWithContentsOfURL:(NSURL *)url error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        NSArray *array = await([self async_arrayWithContentsOfURL:url]);
+        NSArray *array = _await([self async_arrayWithContentsOfURL:url]);
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -46,7 +46,7 @@
 
 + (NSArray *)co_arrayWithContentsOfFile:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        NSArray *array = await([self async_arrayWithContentsOfFile:path]);
+        NSArray *array = _await([self async_arrayWithContentsOfFile:path]);
         return array;
     }
     else{
@@ -56,7 +56,7 @@
 
 - (NSArray *)co_initWithContentsOfURL:(NSURL *)url error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        NSArray *array = await([self async_initWithContentsOfURL:url]);
+        NSArray *array = _await([self async_initWithContentsOfURL:url]);
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -78,7 +78,7 @@
 
 - (NSArray *)co_initWithContentsOfFile:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        NSArray *array = await([self async_initWithContentsOfFile:path]);
+        NSArray *array = _await([self async_initWithContentsOfFile:path]);
         return array;
     }
     else{
@@ -88,7 +88,7 @@
 
 - (BOOL)co_writeToFile:(NSString *)path atomically:(BOOL)useAuxiliaryFile{
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_writeToFile:path atomically:useAuxiliaryFile]) boolValue];
+        return [_await([self async_writeToFile:path atomically:useAuxiliaryFile]) boolValue];
     }
     else{
         return [self writeToFile:path atomically:useAuxiliaryFile];
@@ -97,7 +97,7 @@
 
 - (BOOL)co_writeToURL:(NSURL *)url error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_writeToURL:url]) boolValue];
+        BOOL ret = [_await([self async_writeToURL:url]) boolValue];
         if (error) {
             if (co_getError()) {
                 *error = co_getError();
@@ -115,7 +115,7 @@
 
 - (BOOL)co_writeToURL:(NSURL *)url atomically:(BOOL)atomically{
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_writeToURL:url atomically:atomically]) boolValue];
+        return [_await([self async_writeToURL:url atomically:atomically]) boolValue];
     }
     else{
         return [self writeToURL:url atomically:atomically];
@@ -226,7 +226,7 @@
 
 + (NSMutableArray *)co_arrayWithContentsOfFile:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_arrayWithContentsOfFile:path]);
+        return _await([self async_arrayWithContentsOfFile:path]);
     }
     else{
         return [self arrayWithContentsOfFile:path];
@@ -235,7 +235,7 @@
 
 + (NSMutableArray *)co_arrayWithContentsOfURL:(NSURL *)url{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_arrayWithContentsOfURL:url]);
+        return _await([self async_arrayWithContentsOfURL:url]);
     }
     else{
         return [self arrayWithContentsOfURL:url];
@@ -244,7 +244,7 @@
 
 - (NSMutableArray *)co_initWithContentsOfFile:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_initWithContentsOfFile:path]);
+        return _await([self async_initWithContentsOfFile:path]);
     }
     else{
         return [self initWithContentsOfFile:path];
@@ -253,7 +253,7 @@
 
 - (NSMutableArray *)co_initWithContentsOfURL:(NSURL *)url{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_initWithContentsOfURL:url]);
+        return _await([self async_initWithContentsOfURL:url]);
     }
     else{
         return [self initWithContentsOfURL:url];

@@ -190,7 +190,7 @@
     SURE_ASYNC
     NSData *data = nil;
     NSURLResponse *resp = nil;
-    co_unpack(&data, &resp) = await([self async_dataTaskWithRequest:request]);
+    co_unpack(&data, &resp) = _await([self async_dataTaskWithRequest:request]);
     if (error) {
         *error = co_getError();
     }
@@ -204,7 +204,7 @@
     SURE_ASYNC
     NSData *data = nil;
     NSURLResponse *resp = nil;
-    co_unpack(&data, &resp) = await([self async_dataTaskWithURL:url]);
+    co_unpack(&data, &resp) = _await([self async_dataTaskWithURL:url]);
     if (error) {
         *error = co_getError();
     }
@@ -218,7 +218,7 @@
     SURE_ASYNC
     NSData *data = nil;
     NSURLResponse *resp = nil;
-    co_unpack(&data, &resp) = await([self async_uploadTaskWithRequest:request fromData:bodyData]);
+    co_unpack(&data, &resp) = _await([self async_uploadTaskWithRequest:request fromData:bodyData]);
     if (error) {
         *error = co_getError();
     }
@@ -232,7 +232,7 @@
     SURE_ASYNC
     NSData *data = nil;
     NSURLResponse *resp = nil;
-    co_unpack(&data, &resp) = await([self async_uploadTaskWithRequest:request fromFile:fileURL]);
+    co_unpack(&data, &resp) = _await([self async_uploadTaskWithRequest:request fromFile:fileURL]);
     if (error) {
         *error = co_getError();
     }
@@ -246,7 +246,7 @@
     SURE_ASYNC
     NSURL *fileURL = nil;
     NSURLResponse *resp = nil;
-    co_unpack(&fileURL, &resp) = await([self async_downloadTaskWithURL:url]);
+    co_unpack(&fileURL, &resp) = _await([self async_downloadTaskWithURL:url]);
     if (error) {
         *error = co_getError();
     }
@@ -260,7 +260,7 @@
     SURE_ASYNC
     NSURL *fileURL = nil;
     NSURLResponse *resp = nil;
-    co_unpack(&fileURL, &resp) = await([self async_downloadTaskWithRequest:request]);
+    co_unpack(&fileURL, &resp) = _await([self async_downloadTaskWithRequest:request]);
     if (error) {
         *error = co_getError();
     }
@@ -274,7 +274,7 @@
     SURE_ASYNC
     NSURL *fileURL = nil;
     NSURLResponse *resp = nil;
-    co_unpack(&fileURL, &resp) = await([self async_downloadTaskWithResumeData:resumeData]);
+    co_unpack(&fileURL, &resp) = _await([self async_downloadTaskWithResumeData:resumeData]);
     if (error) {
         *error = co_getError();
     }

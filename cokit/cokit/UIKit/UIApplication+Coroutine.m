@@ -33,7 +33,7 @@
                 resolve(@(NO));
             }
         }];
-        id value = await(promise);
+        id value = _await(promise);
         return [value boolValue];
     } else {
         return [self openURL:url];

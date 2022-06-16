@@ -345,7 +345,7 @@ void *nsthread_fn(void *arg __unused)
         for (int i = 0; i < 10; i++) {
             RR_AUTORELEASE([[Deallocator alloc] init]);
         }
-        id val = await([self makeAsynPromise]);
+        id val = _await([self makeAsynPromise]);
         //TODO: NSLog会导致autorelease崩溃
         printf("%d\n", [val intValue]);
         for (int i = 0; i < 10; i++) {
@@ -435,7 +435,7 @@ void *nsthread_fn(void *arg __unused)
             co_autoreleasePoolPop(ctx1);
         }
         
-        id val = await([self makeAsynPromise]);
+        id val = _await([self makeAsynPromise]);
         //TODO: NSLog会导致autorelease崩溃
         NSLog(@"%@", val);
         {
@@ -445,7 +445,7 @@ void *nsthread_fn(void *arg __unused)
             }
             co_autoreleasePoolPop(ctx1);
         }
-        val = await([self makeAsynPromise]);
+        val = _await([self makeAsynPromise]);
         //TODO: NSLog会导致autorelease崩溃
         NSLog(@"%@", val);
         
@@ -481,7 +481,7 @@ void *nsthread_fn(void *arg __unused)
 //            co_autoreleasePoolPop(ctx1);
         }
         
-        id val = await([self makeAsynPromise]);
+        id val = _await([self makeAsynPromise]);
         //TODO: NSLog会导致autorelease崩溃
         NSLog(@"%@", val);
         {
@@ -491,7 +491,7 @@ void *nsthread_fn(void *arg __unused)
             }
             co_autoreleasePoolPop(ctx1);
         }
-        val = await([self makeAsynPromise]);
+        val = _await([self makeAsynPromise]);
         //TODO: NSLog会导致autorelease崩溃
         NSLog(@"%@", val);
         

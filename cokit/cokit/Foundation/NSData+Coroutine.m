@@ -23,14 +23,14 @@
 
 - (BOOL)co_writeToFile:(NSString *)path atomically:(BOOL)useAuxiliaryFile{
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_writeToFile:path atomically:useAuxiliaryFile]) boolValue];
+        return [_await([self async_writeToFile:path atomically:useAuxiliaryFile]) boolValue];
     }
     return [self writeToFile:path atomically:useAuxiliaryFile];
 }
 
 - (BOOL)co_writeToFile:(NSString *)path options:(NSDataWritingOptions)writeOptionsMask error:(NSError *__autoreleasing *)errorPtr{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_writeToFile:path options:writeOptionsMask]) boolValue];
+        BOOL ret = [_await([self async_writeToFile:path options:writeOptionsMask]) boolValue];
         if (errorPtr) {
             if (co_getError()) {
                 *errorPtr = co_getError();
@@ -46,14 +46,14 @@
 
 - (BOOL)co_writeToURL:(NSURL *)url atomically:(BOOL)atomically{
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_writeToURL:url atomically:atomically]) boolValue];
+        return [_await([self async_writeToURL:url atomically:atomically]) boolValue];
     }
     return [self writeToURL:url atomically:atomically];
 }
 
 - (BOOL)co_writeToURL:(NSURL *)url options:(NSDataWritingOptions)writeOptionsMask error:(NSError **)errorPtr{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_writeToURL:url options:writeOptionsMask]) boolValue];
+        BOOL ret = [_await([self async_writeToURL:url options:writeOptionsMask]) boolValue];
         if (errorPtr) {
             if (co_getError()) {
                 *errorPtr = co_getError();
@@ -69,21 +69,21 @@
 
 + (NSData *)co_dataWithContentsOfURL:(NSURL *)url{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_dataWithContentsOfURL:url]);
+        return _await([self async_dataWithContentsOfURL:url]);
     }
     return [self dataWithContentsOfURL:url];
 }
 
 + (NSData *)co_dataWithContentsOfFile:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_dataWithContentsOfFile:path]);
+        return _await([self async_dataWithContentsOfFile:path]);
     }
     return [self dataWithContentsOfFile:path];
 }
 
 + (NSData *)co_dataWithContentsOfURL:(NSURL *)url options:(NSDataReadingOptions)readOptionsMask error:(NSError **)errorPtr{
     if ([COCoroutine currentCoroutine]) {
-        NSData *data = await([self async_dataWithContentsOfURL:url options:readOptionsMask]);
+        NSData *data = _await([self async_dataWithContentsOfURL:url options:readOptionsMask]);
         if (errorPtr) {
             if (co_getError()) {
                 *errorPtr = co_getError();
@@ -99,7 +99,7 @@
 
 + (NSData *)co_dataWithContentsOfFile:(NSString *)path options:(NSDataReadingOptions)readOptionsMask error:(NSError *__autoreleasing *)errorPtr{
     if ([COCoroutine currentCoroutine]) {
-        NSData *data = await([self async_dataWithContentsOfFile:path options:readOptionsMask]);
+        NSData *data = _await([self async_dataWithContentsOfFile:path options:readOptionsMask]);
         if (errorPtr) {
             if (co_getError()) {
                 *errorPtr = co_getError();
@@ -115,21 +115,21 @@
 
 - (NSData *)co_initWithContentsOfURL:(NSURL *)url{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_initWithContentsOfURL:url]);
+        return _await([self async_initWithContentsOfURL:url]);
     }
     return [self initWithContentsOfURL:url];
 }
 
 - (NSData *)co_initWithContentsOfFile:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_initWithContentsOfFile:path]);
+        return _await([self async_initWithContentsOfFile:path]);
     }
     return [self initWithContentsOfFile:path];
 }
 
 - (NSData *)co_initWithContentsOfURL:(NSURL *)url options:(NSDataReadingOptions)readOptionsMask error:(NSError *__autoreleasing *)errorPtr{
     if ([COCoroutine currentCoroutine]) {
-        NSData *data = await([self async_initWithContentsOfURL:url options:readOptionsMask]);
+        NSData *data = _await([self async_initWithContentsOfURL:url options:readOptionsMask]);
         if (errorPtr) {
             if (co_getError()) {
                 *errorPtr = co_getError();
@@ -145,7 +145,7 @@
 
 - (NSData *)co_initWithContentsOfFile:(NSString *)path options:(NSDataReadingOptions)readOptionsMask error:(NSError *__autoreleasing *)errorPtr{
     if ([COCoroutine currentCoroutine]) {
-        NSData *data = await([self async_initWithContentsOfFile:path options:readOptionsMask]);
+        NSData *data = _await([self async_initWithContentsOfFile:path options:readOptionsMask]);
         if (errorPtr) {
             if (co_getError()) {
                 *errorPtr = co_getError();

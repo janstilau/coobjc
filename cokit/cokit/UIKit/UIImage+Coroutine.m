@@ -24,7 +24,7 @@
 
 + (UIImage *)co_imageNamed:(NSString *)name{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_imageNamed:name]);
+        return _await([self async_imageNamed:name]);
     }
     else{
         return [self imageNamed:name];
@@ -34,7 +34,7 @@
 #if __has_include(<UIKit/UITraitCollection.h>)
 + (UIImage *)co_imageNamed:(NSString *)name inBundle:(NSBundle *)bundle compatibleWithTraitCollection:(UITraitCollection *)traitCollection{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_imageNamed:name inBundle:bundle compatibleWithTraitCollection:traitCollection]);
+        return _await([self async_imageNamed:name inBundle:bundle compatibleWithTraitCollection:traitCollection]);
     }
     else{
         return [self imageNamed:name inBundle:bundle compatibleWithTraitCollection:traitCollection];
@@ -44,7 +44,7 @@
 
 + (UIImage *)co_imageWithContentsOfFileNamed:(NSString *)imageName{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_imageWithContentsOfFileNamed:imageName]);
+        return _await([self async_imageWithContentsOfFileNamed:imageName]);
     }
     else{
         return nil;
@@ -53,7 +53,7 @@
 
 + (UIImage *)co_imageWithContentsOfFile:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_imageWithContentsOfFile:path]);
+        return _await([self async_imageWithContentsOfFile:path]);
     }
     else{
         return [self imageWithContentsOfFile:path];
@@ -62,7 +62,7 @@
 
 + (UIImage *)co_imageWithData:(NSData *)data{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_imageWithData:data]);
+        return _await([self async_imageWithData:data]);
     }
     else{
         return [self imageWithData:data];
@@ -71,7 +71,7 @@
 
 + (UIImage *)co_imageWithData:(NSData *)data scale:(CGFloat)scale{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_imageWithData:data scale:scale]);
+        return _await([self async_imageWithData:data scale:scale]);
     }
     else{
         return [self imageWithData:data scale:scale];
@@ -80,14 +80,14 @@
 
 - (UIImage *)co_initWithContentsOfFileNamed:(NSString *)imageName{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_initWithContentsOfFileNamed:imageName]);
+        return _await([self async_initWithContentsOfFileNamed:imageName]);
     }
     return nil;
 }
 
 - (UIImage *)co_initWithContentsOfFile:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_initWithContentsOfFile:path]);
+        return _await([self async_initWithContentsOfFile:path]);
     }
     else{
         return [self initWithContentsOfFile:path];
@@ -96,7 +96,7 @@
 
 - (UIImage *)co_initWithData:(NSData *)data{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_initWithData:data]);
+        return _await([self async_initWithData:data]);
     }
     else{
         return [self initWithData:data];
@@ -105,7 +105,7 @@
 
 - (UIImage *)co_initWithData:(NSData *)data scale:(CGFloat)scale{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_initWithData:data scale:scale]);
+        return _await([self async_initWithData:data scale:scale]);
     }
     else{
         return [self initWithData:data scale:scale];
@@ -322,7 +322,7 @@ COPromise<NSData *>* async_UIImageJPEGRepresentation(UIImage * __nonnull image, 
 NSData * co_UIImagePNGRepresentation(UIImage * __nonnull image)                               // return image as PNG. May return nil if image has no CGImageRef or invalid bitmap format
 {
     if ([COCoroutine currentCoroutine]) {
-        return await(async_UIImagePNGRepresentation(image));
+        return _await(async_UIImagePNGRepresentation(image));
     }
     else{
         return UIImagePNGRepresentation(image);
@@ -331,7 +331,7 @@ NSData * co_UIImagePNGRepresentation(UIImage * __nonnull image)                 
 NSData * co_UIImageJPEGRepresentation(UIImage * __nonnull image, CGFloat compressionQuality)  // return image as JPEG. May return nil if image has no CGImageRef or invalid bitmap format. compression is 0(most)..1(least)
 {
     if ([COCoroutine currentCoroutine]) {
-        return await(async_UIImageJPEGRepresentation(image, compressionQuality));
+        return _await(async_UIImageJPEGRepresentation(image, compressionQuality));
     }
     else{
         return UIImageJPEGRepresentation(image, compressionQuality);

@@ -111,7 +111,7 @@ NS_INLINE COCoroutine * _Nonnull  co_launch_withStackSizeAndQueue(NSUInteger sta
  But we suggest use Promise first.
  @return return the value, nullable. after, you can use co_getError() method to get the error.
  */
-NS_INLINE id _Nullable await(id _Nonnull _promiseOrChan) {
+NS_INLINE id _Nullable _await(id _Nonnull _promiseOrChan) {
     id val = co_await(_promiseOrChan);
     return val;
 }

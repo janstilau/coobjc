@@ -46,7 +46,7 @@
 
 + (NSData*)co_archivedDataWithRootObject:(id)rootObject{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_archivedDataWithRootObject:rootObject]);
+        return _await([self async_archivedDataWithRootObject:rootObject]);
     }
     else{
         return [self archivedDataWithRootObject:rootObject];
@@ -54,7 +54,7 @@
 }
 + (BOOL)co_archiveRootObject:(id)rootObject toFile:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_archiveRootObject:rootObject toFile:path]) boolValue];
+        return [_await([self async_archiveRootObject:rootObject toFile:path]) boolValue];
     }
     else{
         return [self archiveRootObject:rootObject toFile:path];
@@ -104,7 +104,7 @@
 
 + (id)co_unarchiveObjectWithData:(NSData *)data{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_unarchiveObjectWithData:data]);
+        return _await([self async_unarchiveObjectWithData:data]);
     }
     else{
         return [self unarchiveObjectWithData:data];
@@ -113,7 +113,7 @@
 
 + (id)co_unarchiveObjectWithFile:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_unarchiveObjectWithFile:path]);
+        return _await([self async_unarchiveObjectWithFile:path]);
     }
     else{
         return [self unarchiveObjectWithFile:path];
@@ -122,7 +122,7 @@
 
 + (id)co_unarchiveTopLevelObjectWithData:(NSData *)data error:(NSError * _Nullable __autoreleasing * _Nullable)error{
     if ([COCoroutine currentCoroutine]) {
-        id obj = await([self async_unarchiveTopLevelObjectWithData:data]);
+        id obj = _await([self async_unarchiveTopLevelObjectWithData:data]);
         if (error) {
             *error = co_getError();
         }

@@ -105,7 +105,7 @@
 + (BOOL)co_isValidJSONObject:(id)obj CO_ASYNC
 {
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_isValidJSONObject:obj]) boolValue];
+        return [_await([self async_isValidJSONObject:obj]) boolValue];
     }
     else{
         return [self isValidJSONObject:obj];
@@ -117,7 +117,7 @@
 + (NSData *)co_dataWithJSONObject:(id)obj options:(NSJSONWritingOptions)opt error:(NSError**)error CO_ASYNC
 {
     if ([COCoroutine currentCoroutine]) {
-        NSData *data = await([self async_dataWithJSONObject:obj options:opt]);
+        NSData *data = _await([self async_dataWithJSONObject:obj options:opt]);
         if (error) {
             *error = co_getError();
         }
@@ -134,7 +134,7 @@
 + (id)co_JSONObjectWithData:(NSData *)data options:(NSJSONReadingOptions)opt error:(NSError**)error CO_ASYNC
 {
     if ([COCoroutine currentCoroutine]) {
-        id obj = await([self async_JSONObjectWithData:data options:opt]);
+        id obj = _await([self async_JSONObjectWithData:data options:opt]);
         if (error) {
             *error = co_getError();
         }
@@ -150,7 +150,7 @@
 + (BOOL)co_writeJSONObject:(id)obj toStream:(NSOutputStream *)stream options:(NSJSONWritingOptions)opt error:(NSError**)error CO_ASYNC
 {
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_writeJSONObject:obj toStream:stream options:opt]) boolValue];
+        BOOL ret = [_await([self async_writeJSONObject:obj toStream:stream options:opt]) boolValue];
         if (error) {
             *error = co_getError();
         }
@@ -166,7 +166,7 @@
 + (id)co_JSONObjectWithStream:(NSInputStream *)stream options:(NSJSONReadingOptions)opt error:(NSError**)error CO_ASYNC
 {
     if ([COCoroutine currentCoroutine]) {
-        id obj = await([self async_JSONObjectWithStream:stream options:opt]);
+        id obj = _await([self async_JSONObjectWithStream:stream options:opt]);
         if (error) {
             *error = co_getError();
         }

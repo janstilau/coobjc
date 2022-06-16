@@ -203,7 +203,7 @@
 
 - (NSString *)co_initWithContentsOfURL:(NSURL *)url encoding:(NSStringEncoding)enc error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        NSString *result = await([self async_initWithContentsOfURL:url encoding:enc]);
+        NSString *result = _await([self async_initWithContentsOfURL:url encoding:enc]);
         if (error) {
             *error = co_getError();
         }
@@ -216,7 +216,7 @@
 
 - (NSString *)co_initWithContentsOfFile:(NSString *)path encoding:(NSStringEncoding)enc error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        NSString *result = await([self async_initWithContentsOfFile:path encoding:enc]);
+        NSString *result = _await([self async_initWithContentsOfFile:path encoding:enc]);
         if (error) {
             *error = co_getError();
         }
@@ -229,7 +229,7 @@
 
 + (NSString *)co_stringWithContentsOfURL:(NSURL *)url encoding:(NSStringEncoding)enc error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        NSString *result = await([self async_stringWithContentsOfURL:url encoding:enc]);
+        NSString *result = _await([self async_stringWithContentsOfURL:url encoding:enc]);
         if (error) {
             *error = co_getError();
         }
@@ -242,7 +242,7 @@
 
 + (NSString *)co_stringWithContentsOfFile:(NSString *)path encoding:(NSStringEncoding)enc error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        NSString *result = await([self async_stringWithContentsOfFile:path encoding:enc]);
+        NSString *result = _await([self async_stringWithContentsOfFile:path encoding:enc]);
         if (error) {
             *error = co_getError();
         }
@@ -257,7 +257,7 @@
     if ([COCoroutine currentCoroutine]) {
         NSString *result = nil;
         id encoding;
-        co_unpack(&result, &encoding) = await([self async_initWithContentsOfURL:url]);
+        co_unpack(&result, &encoding) = _await([self async_initWithContentsOfURL:url]);
         if (error) {
             *error = co_getError();
         }
@@ -275,7 +275,7 @@
     if ([COCoroutine currentCoroutine]) {
         NSString *result = nil;
         id encoding;
-        co_unpack(&result, &encoding) = await([self async_initWithContentsOfFile:path]);
+        co_unpack(&result, &encoding) = _await([self async_initWithContentsOfFile:path]);
         if (error) {
             *error = co_getError();
         }
@@ -293,7 +293,7 @@
     if ([COCoroutine currentCoroutine]) {
         NSString *result = nil;
         id encoding;
-        co_unpack(&result, &encoding) = await([self async_stringWithContentsOfURL:url]);
+        co_unpack(&result, &encoding) = _await([self async_stringWithContentsOfURL:url]);
         if (error) {
             *error = co_getError();
         }
@@ -311,7 +311,7 @@
     if ([COCoroutine currentCoroutine]) {
         NSString *result = nil;
         id encoding;
-        co_unpack(&result, &encoding) = await([self async_stringWithContentsOfFile:path]);
+        co_unpack(&result, &encoding) = _await([self async_stringWithContentsOfFile:path]);
         if (error) {
             *error = co_getError();
         }
@@ -327,7 +327,7 @@
 
 - (BOOL)co_writeToURL:(NSURL *)url atomically:(BOOL)useAuxiliaryFile encoding:(NSStringEncoding)enc error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_writeToURL:url atomically:useAuxiliaryFile encoding:enc]) boolValue];
+        BOOL ret = [_await([self async_writeToURL:url atomically:useAuxiliaryFile encoding:enc]) boolValue];
         if (error) {
             *error = co_getError();
         }
@@ -340,7 +340,7 @@
 
 - (BOOL)co_writeToFile:(NSString *)path atomically:(BOOL)useAuxiliaryFile encoding:(NSStringEncoding)enc error:(NSError * _Nullable __autoreleasing *)error{
     if ([COCoroutine currentCoroutine]) {
-        BOOL ret = [await([self async_writeToFile:path atomically:useAuxiliaryFile encoding:enc]) boolValue];
+        BOOL ret = [_await([self async_writeToFile:path atomically:useAuxiliaryFile encoding:enc]) boolValue];
         if (error) {
             *error = co_getError();
         }
@@ -353,7 +353,7 @@
 
 - (id)co_stringToJSONObject{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_stringToJSONObject]);
+        return _await([self async_stringToJSONObject]);
     }
     else{
         @try{

@@ -115,7 +115,7 @@
 - (BOOL)co_writeToURL:(NSURL *)url error:(NSError**)error API_AVAILABLE(macos(10.13), ios(11.0), watchos(4.0), tvos(11.0))
 {
     if([COCoroutine currentCoroutine]){
-        BOOL ret = [await([self async_writeToURL:url]) boolValue];
+        BOOL ret = [_await([self async_writeToURL:url]) boolValue];
         if(error){
             if(co_getError()){
                 *error = co_getError();
@@ -133,7 +133,7 @@
 
 + (NSDictionary *)co_dictionaryWithContentsOfFile:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_dictionaryWithContentsOfFile:path]);
+        return _await([self async_dictionaryWithContentsOfFile:path]);
     }
     else{
         return [self dictionaryWithContentsOfFile:path];
@@ -141,7 +141,7 @@
 }
 + (NSDictionary *)co_dictionaryWithContentsOfURL:(NSURL *)url{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_dictionaryWithContentsOfURL:url]);
+        return _await([self async_dictionaryWithContentsOfURL:url]);
     }
     else{
         return [self dictionaryWithContentsOfURL:url];
@@ -149,7 +149,7 @@
 }
 - (NSDictionary *)co_initWithContentsOfFile:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_initWithContentsOfFile:path]);
+        return _await([self async_initWithContentsOfFile:path]);
     }
     else{
         return [self initWithContentsOfFile:path];
@@ -157,7 +157,7 @@
 }
 - (NSDictionary *)co_initWithContentsOfURL:(NSURL *)url{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_initWithContentsOfURL:url]);
+        return _await([self async_initWithContentsOfURL:url]);
     }
     else{
         return [self initWithContentsOfURL:url];
@@ -166,7 +166,7 @@
 
 - (BOOL)co_writeToFile:(NSString *)path atomically:(BOOL)useAuxiliaryFile{
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_writeToFile:path atomically:useAuxiliaryFile]) boolValue];
+        return [_await([self async_writeToFile:path atomically:useAuxiliaryFile]) boolValue];
     }
     else{
         return [self writeToFile:path atomically:useAuxiliaryFile];
@@ -175,7 +175,7 @@
 - (BOOL)co_writeToURL:(NSURL *)url atomically:(BOOL)atomically // the atomically flag is ignored if url of a type that cannot be written atomically.
 {
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_writeToURL:url atomically:atomically]) boolValue];
+        return [_await([self async_writeToURL:url atomically:atomically]) boolValue];
     }
     else{
         return [self writeToURL:url atomically:atomically];
@@ -228,7 +228,7 @@
 
 + (NSMutableDictionary *)co_dictionaryWithContentsOfFile:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_dictionaryWithContentsOfFile:path]);
+        return _await([self async_dictionaryWithContentsOfFile:path]);
     }
     else{
         return [self dictionaryWithContentsOfFile:path];
@@ -237,7 +237,7 @@
 
 + (NSMutableDictionary *)co_dictionaryWithContentsOfURL:(NSURL *)url{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_dictionaryWithContentsOfURL:url]);
+        return _await([self async_dictionaryWithContentsOfURL:url]);
     }
     else{
         return [self dictionaryWithContentsOfURL:url];
@@ -246,7 +246,7 @@
 
 - (NSMutableDictionary *)co_initWithContentsOfURL:(NSURL *)url{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_initWithContentsOfURL:url]);
+        return _await([self async_initWithContentsOfURL:url]);
     }
     else{
         return [self initWithContentsOfURL:url];
@@ -255,7 +255,7 @@
 
 - (NSMutableDictionary *)co_initWithContentsOfFile:(NSString *)path{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_initWithContentsOfFile:path]);
+        return _await([self async_initWithContentsOfFile:path]);
     }
     else{
         return [self initWithContentsOfFile:path];

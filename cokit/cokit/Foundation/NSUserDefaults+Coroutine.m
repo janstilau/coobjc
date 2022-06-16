@@ -161,7 +161,7 @@
 
 - (id)co_objectForKey:(NSString *)defaultName{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_objectForKey:defaultName]);
+        return _await([self async_objectForKey:defaultName]);
     }
     else{
         return [self objectForKey:defaultName];
@@ -170,7 +170,7 @@
 
 - (void)co_setObject:(id)value forKey:(NSString *)defaultName{
     if ([COCoroutine currentCoroutine]) {
-        await([self async_setObject:value forKey:defaultName]);
+        _await([self async_setObject:value forKey:defaultName]);
     }
     else{
         [self setObject:value forKey:defaultName];
@@ -179,7 +179,7 @@
 
 - (void)co_removeObjectForKey:(NSString *)defaultName{
     if ([COCoroutine currentCoroutine]) {
-        await([self async_removeObjectForKey:defaultName]);
+        _await([self async_removeObjectForKey:defaultName]);
     }
     else{
         [self removeObjectForKey:defaultName];
@@ -188,7 +188,7 @@
 
 - (NSString *)co_stringForKey:(NSString *)defaultName{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_stringForKey:defaultName]);
+        return _await([self async_stringForKey:defaultName]);
     }
     else{
         return [self stringForKey:defaultName];
@@ -197,7 +197,7 @@
 
 - (NSArray *)co_arrayForKey:(NSString *)defaultName{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_arrayForKey:defaultName]);
+        return _await([self async_arrayForKey:defaultName]);
     }
     else{
         return [self arrayForKey:defaultName];
@@ -206,7 +206,7 @@
 
 - (NSDictionary<NSString *,id> *)co_dictionaryForKey:(NSString *)defaultName{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_dictionaryForKey:defaultName]);
+        return _await([self async_dictionaryForKey:defaultName]);
     }
     else{
         return [self dictionaryForKey:defaultName];
@@ -215,7 +215,7 @@
 
 - (NSData *)co_dataForKey:(NSString *)defaultName{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_dataForKey:defaultName]);
+        return _await([self async_dataForKey:defaultName]);
     }
     else{
         return [self dataForKey:defaultName];
@@ -224,7 +224,7 @@
 
 - (NSArray<NSString *> *)co_stringArrayForKey:(NSString *)defaultName{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_stringArrayForKey:defaultName]);
+        return _await([self async_stringArrayForKey:defaultName]);
     }
     else{
         return [self stringArrayForKey:defaultName];
@@ -239,7 +239,7 @@
                 resolve(@(value));
             } onQueue:[COKitCommon userDefaults_queue]];
         }];
-        return [await(promise) integerValue];
+        return [_await(promise) integerValue];
     }
     else{
         return [self integerForKey:defaultName];
@@ -254,7 +254,7 @@
                 resolve(@(value));
             } onQueue:[COKitCommon userDefaults_queue]];
         }];
-        return [await(promise) floatValue];
+        return [_await(promise) floatValue];
     }
     else{
         return [self floatForKey:defaultName];
@@ -269,7 +269,7 @@
                 resolve(@(value));
             } onQueue:[COKitCommon userDefaults_queue]];
         }];
-        return [await(promise) doubleValue];
+        return [_await(promise) doubleValue];
     }
     else{
         return [self doubleForKey:defaultName];
@@ -284,7 +284,7 @@
                 resolve(@(value));
             } onQueue:[COKitCommon userDefaults_queue]];
         }];
-        return [await(promise) boolValue];
+        return [_await(promise) boolValue];
     }
     else{
         return [self boolForKey:defaultName];
@@ -293,7 +293,7 @@
 
 - (NSURL *)co_URLForKey:(NSString *)defaultName{
     if ([COCoroutine currentCoroutine]) {
-        return await([self async_URLForKey:defaultName]);
+        return _await([self async_URLForKey:defaultName]);
     }
     else{
         return [self URLForKey:defaultName];
@@ -302,7 +302,7 @@
 
 - (void)co_setInteger:(NSInteger)value forKey:(NSString *)defaultName{
     if ([COCoroutine currentCoroutine]) {
-        await([self async_setInteger:value forKey:defaultName]);
+        _await([self async_setInteger:value forKey:defaultName]);
     }
     else{
         [self setInteger:value forKey:defaultName];
@@ -311,7 +311,7 @@
 
 - (void)co_setDouble:(double)value forKey:(NSString *)defaultName{
     if ([COCoroutine currentCoroutine]) {
-        await([self async_setDouble:value forKey:defaultName]);
+        _await([self async_setDouble:value forKey:defaultName]);
     }
     else{
         [self setDouble:value forKey:defaultName];
@@ -320,7 +320,7 @@
 
 - (void)co_setFloat:(float)value forKey:(NSString *)defaultName{
     if ([COCoroutine currentCoroutine]) {
-        await([self async_setFloat:value forKey:defaultName]);
+        _await([self async_setFloat:value forKey:defaultName]);
     }
     else{
         [self setFloat:value forKey:defaultName];
@@ -329,7 +329,7 @@
 
 - (void)co_setBool:(BOOL)value forKey:(NSString *)defaultName{
     if ([COCoroutine currentCoroutine]) {
-        await([self async_setBool:value forKey:defaultName]);
+        _await([self async_setBool:value forKey:defaultName]);
     }
     else{
         [self setBool:value forKey:defaultName];
@@ -338,7 +338,7 @@
 
 - (void)co_setURL:(NSURL *)url forKey:(NSString *)defaultName{
     if ([COCoroutine currentCoroutine]) {
-        await([self async_setURL:url forKey:defaultName]);
+        _await([self async_setURL:url forKey:defaultName]);
     }
     else{
         [self setURL:url forKey:defaultName];
@@ -347,7 +347,7 @@
 
 - (BOOL)co_synchronize{
     if ([COCoroutine currentCoroutine]) {
-        return [await([self async_synchronize]) boolValue];
+        return [_await([self async_synchronize]) boolValue];
     }
     else{
         return [self synchronize];
