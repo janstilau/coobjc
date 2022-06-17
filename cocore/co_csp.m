@@ -553,6 +553,7 @@ static int _chanop2(co_channel *c, int op, void *p, int canblock, IMP custom_exe
     a->custom_exec = custom_exec;
     a->cancel_exec = cancel_exec;
 
+    // 这里的实现, 和 SwfitCoroution 没有太多的区别. 
     int ret = chanalt(a);
     free(a);
     return ret;

@@ -1,28 +1,10 @@
-//
-//  COChan.h
-//  coobjc
-//
-//  Copyright © 2018 Alibaba Group Holding Limited All rights reserved.
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class COCoroutine;
 
-/**
+/*
  The channel object.
  
  Channel is a implementation of Process/Channel, which defined in CSP(Communicating
@@ -34,7 +16,7 @@ typedef void (^COChanOnCancelBlock)(COChan *chan);
 
 /**
  Create a Channel object, default buffcount is 0.
-
+ 
  @see `chanWithBuffCount:`
  
  @return the Channel object
@@ -43,7 +25,7 @@ typedef void (^COChanOnCancelBlock)(COChan *chan);
 
 /**
  Create a Channel object, and you can set the buffcount.
-
+ 
  @param buffCount the max buffer count of the channel.
  @return the Channel object
  */
@@ -53,7 +35,7 @@ typedef void (^COChanOnCancelBlock)(COChan *chan);
  Create a expandable Channel.  the buffer count is expandable, which means,
  `send:` will not blocking current process. And, val send to channel will not abandon.
  The buffer count being set to -1.
-
+ 
  @return the Channel object
  */
 + (instancetype)expandableChan;
@@ -100,10 +82,10 @@ typedef void (^COChanOnCancelBlock)(COChan *chan);
 
 /**
  Send a value to the Channel, non blocking.
-
+ 
  @discussion 1. If someone is receiving, send it.
-             2. If no one receiving, but buffer not full, store in the buffer.
-             3. If no one receiving, and buffer is full, discard value.
+ 2. If no one receiving, but buffer not full, store in the buffer.
+ 3. If no one receiving, and buffer is full, discard value.
  
  @param val the value send to Channel.
  */
@@ -111,10 +93,10 @@ typedef void (^COChanOnCancelBlock)(COChan *chan);
 
 /**
  Receive a value from the Channel, non blocking.
-
+ 
  @discussion 1. If buffer has data, receive a value from buffer.
-             2. If buffer is empty, and someone is sending, receive it.
-             3. If buffer is empty, and on one sending. return nil.
+ 2. If buffer is empty, and someone is sending, receive it.
+ 3. If buffer is empty, and on one sending. return nil.
  
  @return the value object received.
  */
@@ -157,7 +139,7 @@ typedef void (^COChanOnCancelBlock)(COChan *chan);
  Set a callback block when the Channel cancel current blocking operation(send: or receive:)
  
  Must set before `send:` or `receive:`, or it will not work.
-
+ 
  @param onCancelBlock the cancel callback block.
  */
 // - (void)onCancel:(COChanOnCancelBlock _Nullable )onCancelBlock;

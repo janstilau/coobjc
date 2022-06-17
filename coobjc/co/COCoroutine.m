@@ -1,21 +1,3 @@
-//
-//  COCoroutine.m
-//  coobjc
-//
-//  Copyright © 2018 Alibaba Group Holding Limited All rights reserved.
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-
 #import "COCoroutine.h"
 #import "COChan.h"
 #import "coroutine.h"
@@ -44,6 +26,10 @@ NSString *const COInvalidException = @"COInvalidException";
 
 @end
 
+/*
+ 就和 Thread 如何和 pthread 挂钩上一样.
+ 其实就是 pthread 后去到 coroutine_t, 然后找到对应的 userdata, 那么可以看到, 这个 user data, 其实就是一个 COCoroutine 对象了.
+ */
 COCoroutine *co_get_obj(coroutine_t  *co) {
     if (co == nil) {
         return nil;
@@ -77,12 +63,14 @@ id _Nullable co_getspecific(NSString *key) {
     return [co paramForKey:key];
 }
 
+// 开启一个协程的入口函数, 可以理解成为 pthread start 函数.
 static void co_exec(coroutine_t  *co) {
     
     COCoroutine *coObj = co_get_obj(co);
     if (coObj) {
         [coObj execute];
         
+        // 当 execute 结束了之后, 这个协程的状态也就完毕了.
         coObj.isFinished = YES;
         if (coObj.finishedBlock) {
             coObj.finishedBlock();
@@ -128,7 +116,6 @@ static void co_obj_dispose(void *coObj) {
     return [_parameters valueForKey:key];
 }
 
-
 + (COCoroutine *)currentCoroutine {
     return co_get_obj(coroutine_self());
 }
@@ -152,6 +139,7 @@ static void co_obj_dispose(void *coObj) {
         _execBlock = [block copy];
         _dispatch = queue ? [CODispatch dispatchWithQueue:queue] : [CODispatch currentDispatch];
         
+        // 在这里, 设置了 协程的启动函数. 
         coroutine_t  *co = coroutine_create((void (*)(void *))co_exec);
         if (stackSize > 0 && stackSize < 1024*1024) {   // Max 1M
             co->stack_size = (uint32_t)((stackSize % 16384 > 0) ? ((stackSize/16384 + 1) * 16384) : stackSize);        // Align with 16kb
@@ -166,7 +154,7 @@ static void co_obj_dispose(void *coObj) {
     
     return [self coroutineWithBlock:block onQueue:queue stackSize:0];
 }
-    
+
 + (instancetype)coroutineWithBlock:(void(^)(void))block onQueue:(dispatch_queue_t)queue stackSize:(NSUInteger)stackSize {
     return [[[self class] alloc] initWithBlock:block onQueue:queue stackSize:stackSize];
 }
@@ -184,7 +172,8 @@ static void co_obj_dispose(void *coObj) {
     if (_isCancelled) {
         return;
     }
-    NSArray *subroutines = self.subroutines.copy;;
+    NSArray *subroutines = self.subroutines.copy;
+    // 将, cancel 的状态, 向下传递了过去. 
     if (subroutines.count) {
         for (COCoroutine *subco in subroutines) {
             [subco cancel];
@@ -296,6 +285,7 @@ id co_await(id awaitable) {
     if (t == nil) {
         @throw [NSException exceptionWithName:COInvalidException reason:@"Cannot call co_await out of a coroutine" userInfo:nil];
     }
+    
     if (t->is_cancelled) {
         return nil;
     }
@@ -308,21 +298,24 @@ id co_await(id awaitable) {
     } else if ([awaitable isKindOfClass:[COPromise class]]) {
         
         COChan *chan = [COChan chanWithBuffCount:1];
-        COCoroutine *co = co_get_obj(t);
+        COCoroutine *currentCoroutine = co_get_obj(t);
         
-        co.lastError = nil;
+        currentCoroutine.lastError = nil;
         
+        // 当 Promise 的值确定了之后, 会触发 Channel 的 send .
         COPromise *promise = awaitable;
         [[promise
           then:^id _Nullable(id  _Nullable value) {
-              [chan send_nonblock:value];
-              return value;
-          }]
+            [chan send_nonblock:value];
+            return value;
+        }]
          catch:^(NSError * _Nonnull error) {
-             co.lastError = error;
-             [chan send_nonblock:nil];
-         }];
+            currentCoroutine.lastError = error;
+            [chan send_nonblock:nil];
+        }];
         
+        // receiveWithOnCancel 中, 会出现协程的切换.
+        // 这里, chan 会一直等待, 有新的值发生, 如果没有发生, 会发生协程的暂停. 
         id val = [chan receiveWithOnCancel:^(COChan * _Nonnull chan) {
             [promise cancel];
         }];

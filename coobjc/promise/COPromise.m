@@ -4,6 +4,8 @@
 #import "co_queue.h"
 #import "COLock.h"
 
+// Promise 的状态值, 是固定的几个值. 在各方实现上都是一致的.
+// 只能是从 Pending 都 Fulfilled, 从 Pending 到 Rejected.
 typedef NS_ENUM(NSInteger, COPromiseState) {
     COPromiseStatePending = 0,
     COPromiseStateFulfilled,
@@ -17,6 +19,10 @@ enum {
     COPromiseCancelledError = -2341,
 };
 
+/*
+    存储所有的回调, 到 Promise 的内部.
+    当, 添加新的回调的时候, 如果状态已经 Resolved 了, 那么直接调用对应的回调. 如果还没有, 那么就是存储, 然后在 resolved 的时候, 调用所有存储的回调.
+ */
 typedef void (^COPromiseObserver)(COPromiseState state, id __nullable resolution);
 
 @interface COPromise<Value>()
@@ -29,6 +35,7 @@ typedef void (^COPromiseObserver)(COPromiseState state, id __nullable resolution
     id __nullable _value;
     NSError *__nullable _error;
 @protected
+    // 所有的, 对于内部状态的修改, 都应该在锁的环境下进行.
     dispatch_semaphore_t    _lock;
 }
 
@@ -62,6 +69,8 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
              constructor 其实就是触发异步函数的地方, 在异步函数的回调里面, 调用 fulfill, reject 来真正的进行数据的改变.
              然后 Promise 的数据改变, 会触发后续的操作.
              */
+            // 在类的内部, 只有这里调用了 fulfill 和 reject 方法.
+            // 在类的外部, 这两个方法可以大量的使用.
             COPromiseFulfill fulfill = ^(id value){
                 [self fulfill:value];
             };
@@ -103,6 +112,8 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
  使用 C 语言独特的写法, 实现了 Defer 的效果.
  */
 
+// 所有的, 对于状态值的读取和修改, 都伴随着锁的设计.
+// 虽然, 这是一个协程的环境, 但是涉及到多线程, 改加锁还是应该进行加锁.
 - (BOOL)isPending {
     COOBJC_SCOPELOCK(_lock);
     BOOL isPending = _state == COPromiseStatePending;
@@ -121,6 +132,7 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
     return isRejected;
 }
 
+// Value, 是 Success 的情况下, 才应该获取到的值.
 - (nullable id)value {
     COOBJC_SCOPELOCK(_lock);
     id result = _value;
@@ -134,9 +146,12 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
 }
 
 - (void)fulfill:(id)value {
+    // 在多线程的环境下, 在锁内进行复制, 在锁外进行对应的使用, 是一个非常常用的写法.
+    // 这样的写法, 使得临界区会大大的减小.
     NSArray<COPromiseObserver> * observers = nil;
     COPromiseState state;
     
+    // do while 的这种写法, 仅仅是为了包住代码块而已, 为了逻辑更加的清晰.
     do {
         COOBJC_SCOPELOCK(_lock);
         // 必须, 是在 Pending 下, 调用 FullFill 才可以.
@@ -151,7 +166,7 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
         }
     } while(0);
     
-    // 在实现了之后, 调用所有的回调.
+    // 在临界区外, 进行各种回调的触发.
     if (observers.count > 0) {
         for (COPromiseObserver observer in observers) {
             observer(state, value);
@@ -196,8 +211,10 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
     }
 }
 
+// Cancel, 就是使用特殊的 Error 来完成 Resolve.
 - (void)cancel {
-    [self reject:[NSError errorWithDomain:COPromiseErrorDomain code:COPromiseCancelledError userInfo:@{NSLocalizedDescriptionKey: @"Promise was cancelled."}]];
+    NSError *cancelError = [NSError errorWithDomain:COPromiseErrorDomain code:COPromiseCancelledError userInfo:@{NSLocalizedDescriptionKey: @"Promise was cancelled."}];
+    [self reject:cancelError];
 }
 
 // 这种, 使用 on 开头的注册回调的方式, 是非常非常普遍的.
@@ -215,6 +232,7 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
 
 #pragma mark - then
 
+// 给当前的 Promise 来添加回调的过程.
 - (void)observeWithFulfill:(COPromiseOnFulfillBlock)onFulfill reject:(COPromiseOnRejectBlock)onReject {
     if (!onFulfill && !onReject) {
         return;
@@ -226,6 +244,7 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
     do {
         COOBJC_SCOPELOCK(_lock);
         switch (_state) {
+                // 如果, 当前的状态时 Pending, 那么就是存储各种闭包.
             case COPromiseStatePending: {
                 if (!_observers) {
                     _observers = [[NSMutableArray alloc] init];
@@ -263,6 +282,7 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
         }
     } while (0);
     
+    // 如果, 当前的状态时 Resolved 的了, 那么就是调用传递过来的闭包. 
     if (state == COPromiseStateFulfilled) {
         if (onFulfill) {
             onFulfill(value);
@@ -274,21 +294,21 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
     }
 }
 
-// 这里的实现, 和标准的 Promise 是一样的.
-// 有一个中介 Promise.
 - (COPromise *)chainedPromiseWithFulfill:(COPromiseChainedFulfillBlock)chainedFulfill
                            chainedReject:(COPromiseChainedRejectBlock)chainedReject {
     
     COPromise *promise = [COPromise promise];
+    // 原来在 OC 里面, 也是有 auto 这样的一个东西存在的.
     __auto_type resolver = ^(id __nullable value, BOOL isReject) {
         if ([value isKindOfClass:[COPromise class]]) {
-            // 标准的 PROMISE 的使用方式.
+            // 如果, 闭包生成了一个新的闭包, 那么这个新的闭包的状态, 来决定返回 Promise 的状态.
             [(COPromise *)value observeWithFulfill:^(id  _Nullable value) {
                 [promise fulfill:value];
             } reject:^(NSError *error) {
                 [promise reject:error];
             }];
         } else {
+            // 否则, 就是使用 Result 的状态, 来决定返回 Promise 的状态.
             if (isReject) {
                 [promise reject:value];
             } else {
@@ -297,6 +317,12 @@ typedef id __nullable (^__nullable COPromiseChainedRejectBlock)(NSError *error);
         }
     };
     
+    /*
+     chainedPromiseWithFulfill 的触发点, 是 then, 和 catch.
+     所以, 这两个参数, 是一个可能有, 一个可能没有的.
+     当 Promise 的 Result 确定了, 如果有对应情况的处理, 那么使用传递过来的闭包来获取结果, 否则, 就是继续传递.
+     这里的处理逻辑, 和 JS 中是一致的.
+     */
     [self observeWithFulfill:^(id  _Nullable value) {
         value = chainedFulfill ? chainedFulfill(value) : value;
         resolver(value, NO);

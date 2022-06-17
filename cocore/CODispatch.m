@@ -58,6 +58,7 @@
 @interface CODispatch ()
 
 @property (nonatomic, strong) NSThread *thread;
+// 使用了 GCD 的 queue 进行调度.
 @property (nonatomic, strong) dispatch_queue_t queue;
 
 @end
@@ -75,8 +76,9 @@
     dispatch_queue_t q = co_get_current_queue();
     if (q) {
         dispatch.queue = q;
-    }
-    else{
+    } else{
+        // 一个懒加载的机制, 保证了, 一定会找到一个 queue.
+        // 是一个串行 queue.
         static dispatch_queue_t q = nil;
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
@@ -100,8 +102,7 @@
 - (void)dispatch_async_block:(dispatch_block_t)block{
     if (_queue) {
         dispatch_async(_queue, block);
-    }
-    else{
+    } else{
         if (_thread) {
             [[CODispatcHandler sharedInstance] performSelector:@selector(handleBlock:) onThread:_thread withObject:[block copy] waitUntilDone:NO];
         }
@@ -116,8 +117,7 @@
         else{
             dispatch_async(_queue, block);
         }
-    }
-    else{
+    } else{
         if (_thread) {
             if ([NSThread currentThread] == _thread) {
                 block();

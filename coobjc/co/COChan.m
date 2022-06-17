@@ -1,21 +1,3 @@
-//
-//  COChan.m
-//  coobjc
-//
-//  Copyright © 2018 Alibaba Group Holding Limited All rights reserved.
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-
 #import "COChan.h"
 #import <cocore/cocore.h>
 #import "COCoroutine.h"
@@ -88,6 +70,9 @@ static void co_chan_custom_resume(coroutine_t *co) {
     }
     
     co.currentChan = self;
+    /*
+     Creates a pointer to a function that calls the specified block when the method is called
+     */
     IMP custom_exec = imp_implementationWithBlock(^{
         COOBJC_SCOPELOCK(self->_buffLock);
         [self.buffList addObject:val ?: kCOChanNilObj];
@@ -151,7 +136,7 @@ static void co_chan_custom_resume(coroutine_t *co) {
             } else {
                 return nil;
             }
-
+            
         } while(0);
         
     } else {
@@ -199,7 +184,7 @@ static void co_chan_custom_resume(coroutine_t *co) {
     
     uint8_t val = 0;
     int ret = channbrecv(_chan, &val);
-
+    
     if (ret == CHANNEL_ALT_SUCCESS) {
         
         do {

@@ -1,21 +1,3 @@
-//
-//  coroutine.c
-//  coobjc
-//
-//  Copyright © 2018 Alibaba Group Holding Limited All rights reserved.
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-
 #include "coroutine.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,6 +34,7 @@ void  coroutine_memory_free(void *ptr, size_t size);
 
 static pthread_key_t coroutine_scheduler_key = 0;
 
+// 不知道, 为什么写的这么复杂, 反正就是 malloc 了一段空间, 当做栈空间.
 void *coroutine_memory_malloc(size_t s) {
     vm_address_t address;
     
@@ -69,6 +52,8 @@ void  coroutine_memory_free(void *ptr, size_t size) {
     }
 }
 
+// 获取, 当前正在运行的协程对象, 是通过 pthread key 这种方式.
+// 这是一个非常通用的方式.
 coroutine_scheduler_t *coroutine_scheduler_self(void) {
     
     if (!coroutine_scheduler_key) {
@@ -195,18 +180,23 @@ static void coroutine_main(coroutine_t *co) {
 __attribute__ ((optnone))
 void coroutine_resume_im(coroutine_t *co) {
     switch (co->status) {
+            // 开启一段新的协程.
         case COROUTINE_READY:
         {
             co->stack_memory = coroutine_memory_malloc(co->stack_size);
             co->stack_top = co->stack_memory + co->stack_size - 3 * sizeof(void *);
             // get the pre context
+            // JumpBuffer 的定义.
             co->pre_context = malloc(sizeof(coroutine_ucontext_t));
             BOOL skip = false;
+            // 将, 当前的运行环境, 记录到协程中.
             coroutine_getcontext(co->pre_context);
+            // 这里的实现思路, 其实是和 SwiftCoroution 是一样的.
             if (skip) {
                 // when proccess reenter(resume a coroutine), skip the remain codes, just return to pre func.
                 return;
             }
+            
 #pragma unused(skip)
             skip = true;
             
@@ -244,6 +234,7 @@ void coroutine_resume(coroutine_t *co) {
         coroutine_scheduler_t *scheduler = coroutine_scheduler_self_create_if_not_exists();
         co->scheduler = scheduler;
         
+        // 将, 要调度的协程, 退出 调度器的内部. 
         scheduler_queue_push(scheduler, co);
         
         if (scheduler->running_coroutine) {

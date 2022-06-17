@@ -1,21 +1,3 @@
-//
-//  COActor.h
-//  coobjc
-//
-//  Copyright © 2018 Alibaba Group Holding Limited All rights reserved.
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-
 #import <Foundation/Foundation.h>
 #import <coobjc/COCoroutine.h>
 #import <coobjc/COActorMessage.h>
@@ -44,7 +26,7 @@ typedef void (^COActorExecutor)(COActorChan *);
 
 /**
  Send a message to the Actor.
-
+ 
  @param message any oc object
  @return An awaitable Channel.
  */
@@ -53,7 +35,7 @@ typedef void (^COActorExecutor)(COActorChan *);
 
 /**
  Actor create method
-
+ 
  @param block execute code block
  @param queue the dispatch_queue_t this actor run.
  @return The actor instance.

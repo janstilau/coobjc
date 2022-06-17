@@ -19,6 +19,7 @@
 #import "COActor.h"
 
 @implementation COActor
+
 @synthesize messageChan = _messageChan;
 
 
