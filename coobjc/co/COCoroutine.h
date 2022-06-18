@@ -60,7 +60,7 @@ extern NSString *const COInvalidException;
 /**
  The code body of the coroutine.
  */
-@property(nonatomic, copy) void (^execBlock) (void);
+@property(nonatomic, copy) void (^mainTask) (void);
 
 /**
  The `dispatch_queue_t` coroutine will run on it.

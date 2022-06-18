@@ -20,19 +20,30 @@ extern NSError *co_getError(void);
     return self;
 }
 
+/*
+ for (COActorMessage *message in channel) {
+     NSString *url = [message stringType];
+     if (url.length > 0) {
+         message.complete(_await([self _getDataWithURL:url]));
+     } else{
+         message.complete(nil);
+     }
+ }
+ 外界是这样使用这个 API 的, 直接使用它的返回值, 进行函数调用.
+ 因为在 _wait 里面, 其实是有着协程控制的, 所以它的调用时机, 其实是在 _wait 之后, 能够确保异步函数调用结束了. 
+ */
+
 - (void (^)(id))complete {
     COActorCompletable *completable = _completableObj;
     return ^(id val){
         if (completable) {
             if (val) {
                 [completable fulfill:val];
-            }
-            else{
+            } else{
                 NSError *error = co_getError();
                 if (error) {
                     [completable reject:error];
-                }
-                else{
+                } else{
                     [completable fulfill:val];
                 }
             }

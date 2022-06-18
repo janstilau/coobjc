@@ -79,6 +79,7 @@
     } else{
         // 一个懒加载的机制, 保证了, 一定会找到一个 queue.
         // 是一个串行 queue.
+        // 可以看到, 默认其实是创建的一个串行队列的.
         static dispatch_queue_t q = nil;
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{

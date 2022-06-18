@@ -220,7 +220,6 @@ void coroutine_resume_im(coroutine_t *co) {
             skip = true;
             // setcontext
             coroutine_setcontext(co->context);
-            
             break;
         }
         default:

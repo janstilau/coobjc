@@ -34,7 +34,11 @@
 }
 
 - (COPromise*)_getDataWithURL:(NSString*)url{
-    return [COPromise promise:^(COPromiseFulfill  _Nonnull resolve, COPromiseReject  _Nonnull reject) {
+    // COPromise 的创建, 传入的 Block, 是开启异步任务的逻辑.
+    // 在异步任务回调里面, 调用 resolve, reject 将 Promise 的状态进行封箱. 然后触发后面 Promise 添加的各种后续回调. 
+    return [COPromise promise:
+            ^(COPromiseFulfill resolve, COPromiseReject reject) {
+        
         [NSURLSession sharedSession].configuration.requestCachePolicy = NSURLRequestReloadIgnoringCacheData;
         NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:[NSURL URLWithString:url] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
             if (error) {
@@ -72,12 +76,15 @@
         _cacheQueue = dispatch_queue_create("com.coobjc.cache", NULL);
         _imageQueue = dispatch_queue_create("com.coobjc.image", NULL);
         _networkActor = co_actor_onqueue(_networkQueue, ^(COActorChan *channel) {
+            /*
+             _networkActor 的协程任务, 就是不断地进行 Receive, 在下面的函数里面, 会调用 _networkActor sendMessage
+             来进行 Actor 的消息接收 .
+             */
             for (COActorMessage *message in channel) {
                 NSString *url = [message stringType];
                 if (url.length > 0) {
                     message.complete(_await([self _getDataWithURL:url]));
-                }
-                else{
+                } else{
                     message.complete(nil);
                 }
             }
@@ -138,8 +145,7 @@
                     data = _await(completable);
                     if (data) {
                         image = [[UIImage alloc] initWithData:data];
-                    }
-                    else{
+                    } else{
                         completable = [self.networkActor sendMessage:url];
                         data = _await(completable);
                         if (data) {

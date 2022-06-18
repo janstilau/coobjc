@@ -42,6 +42,7 @@ COCoroutine *co_get_obj(coroutine_t  *co) {
 }
 
 NSError *co_getError() {
+    // 找到当前的 CORoutine 对象, 找到最后一个 Error 对象. 
     return [COCoroutine currentCoroutine].lastError;
 }
 
@@ -95,8 +96,8 @@ static void co_obj_dispose(void *coObj) {
 
 
 - (void)execute {
-    if (self.execBlock) {
-        self.execBlock();
+    if (self.mainTask) {
+        self.mainTask();
     }
 }
 
@@ -136,7 +137,7 @@ static void co_obj_dispose(void *coObj) {
 - (instancetype)initWithBlock:(void (^)(void))block onQueue:(dispatch_queue_t)queue stackSize:(NSUInteger)stackSize {
     self = [super init];
     if (self) {
-        _execBlock = [block copy];
+        _mainTask = [block copy];
         _dispatch = queue ? [CODispatch dispatchWithQueue:queue] : [CODispatch currentDispatch];
         
         // 在这里, 设置了 协程的启动函数. 
@@ -296,7 +297,11 @@ id co_await(id awaitable) {
         id val = [(COChan *)awaitable receive];
         return val;
     } else if ([awaitable isKindOfClass:[COPromise class]]) {
-        
+        /*
+         如果在 await 里面, 是一个 Promise, 那么是创建了一个 COChan 对象. 在 Promise 的回调里面, 增加了 send 的调用.
+         而在配置完这一切之后, 是调用了 receive 来进行协程的暂停.
+         所有的协程控制, 是放到了 COChan 之中了. 
+         */
         COChan *chan = [COChan chanWithBuffCount:1];
         COCoroutine *currentCoroutine = co_get_obj(t);
         

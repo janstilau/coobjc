@@ -13,7 +13,7 @@ static void co_chan_custom_resume(coroutine_t *co) {
 
 @interface COChan()
 {
-    co_channel *_chan;
+    co_channel *_routineChannel;
     dispatch_semaphore_t    _buffLock;
 }
 
@@ -23,13 +23,6 @@ static void co_chan_custom_resume(coroutine_t *co) {
 @end
 
 @implementation COChan
-
-- (void)dealloc {
-    // free the remain objects in buffer.
-    if (_chan) {
-        chanfree(_chan);
-    }
-}
 
 + (instancetype)chan {
     COChan *chan = [[self alloc] initWithBuffCount:0];
@@ -46,10 +39,17 @@ static void co_chan_custom_resume(coroutine_t *co) {
     return chan;
 }
 
+- (void)dealloc {
+    // free the remain objects in buffer.
+    if (_routineChannel) {
+        chanfree(_routineChannel);
+    }
+}
+
 - (instancetype)initWithBuffCount:(int32_t)buffCount {
     self = [super init];
     if (self) {
-        _chan = chancreate(sizeof(int8_t), buffCount, co_chan_custom_resume);
+        _routineChannel = chancreate(sizeof(int8_t), buffCount, co_chan_custom_resume);
         _buffList = [[NSMutableArray alloc] init];
         COOBJC_LOCK_INIT(_buffLock);
     }
@@ -86,7 +86,7 @@ static void co_chan_custom_resume(coroutine_t *co) {
     }
     // do send
     int8_t v = 1;
-    chansend_custom_exec(_chan, &v, custom_exec, cancel_exec);
+    chansend_custom_exec(_routineChannel, &v, custom_exec, cancel_exec);
     imp_removeBlock(custom_exec);
     if (cancel_exec) {
         imp_removeBlock(cancel_exec);
@@ -115,7 +115,7 @@ static void co_chan_custom_resume(coroutine_t *co) {
     }
     
     uint8_t val = 0;
-    int ret = chanrecv_custom_exec(_chan, &val, cancel_exec);
+    int ret = chanrecv_custom_exec(_routineChannel, &val, cancel_exec);
     if (cancel_exec) {
         imp_removeBlock(cancel_exec);
     }
@@ -176,19 +176,20 @@ static void co_chan_custom_resume(coroutine_t *co) {
         [self.buffList addObject:val ?: kCOChanNilObj];
     });
     int8_t v = 1;
-    channbsend_custom_exec(_chan, &v, custom_exec);
+    channbsend_custom_exec(_routineChannel, &v, custom_exec);
     imp_removeBlock(custom_exec);
 }
 
 - (id)receive_nonblock {
     
     uint8_t val = 0;
-    int ret = channbrecv(_chan, &val);
+    int ret = channbrecv(_routineChannel, &val);
     
     if (ret == CHANNEL_ALT_SUCCESS) {
         
         do {
             COOBJC_SCOPELOCK(_buffLock);
+            // 在对 FIFO Queue 进行操作的时候, 一定是要在锁的环境下才可以.
             NSMutableArray *buffList = self.buffList;
             if (buffList.count > 0) {
                 id obj = buffList.firstObject;

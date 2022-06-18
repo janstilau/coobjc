@@ -9,7 +9,7 @@
 typedef enum {
     CHANNEL_SEND = 1,
     CHANNEL_RECEIVE,
-} channel_op;
+} channel_operation;
 
 enum channel_errorno {
     CHANNEL_ALT_SUCCESS = 1,
@@ -36,7 +36,7 @@ struct chan_alt
     chan_alt            *next;
     IMP                 custom_exec;
     IMP                 cancel_exec;
-    channel_op          op;
+    channel_operation          op;
     int                 can_block;
     bool                is_cancelled;
 };

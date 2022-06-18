@@ -1,21 +1,3 @@
-//
-//  COActorChan.m
-//  coobjc
-//
-//  Copyright © 2018 Alibaba Group Holding Limited All rights reserved.
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-
 #import "COActorChan.h"
 
 @interface COActorChan ()
@@ -29,6 +11,7 @@
 
 @implementation COActorChan
 
+// 唯一和 COChan 的区别, 就是实现了 Next 方法, 可以使用迭代这个概念了.
 - (COActorMessage *)next {
     id obj = [self receive];
     if (![obj isKindOfClass:[COActorMessage class]]) {
@@ -39,7 +22,9 @@
     return obj;
 }
 
-- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id __unsafe_unretained _Nullable [_Nonnull])buffer count:(NSUInteger)len {
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state
+                                  objects:(id __unsafe_unretained _Nullable [_Nonnull])buffer
+                                    count:(NSUInteger)len {
     
     if (state->state == 0) {
         state->mutationsPtr = &enum_state;
